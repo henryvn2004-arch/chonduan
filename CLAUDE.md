@@ -138,29 +138,46 @@ app/
 - Sitemap dynamic tại `/api/sitemap.xml`
 - Khảo luận cron 3x/day, tags cố định (8 tags), 1200-2000 từ/bài
 
+## Cách làm việc theo Sprint
+
+**Mỗi session mới = 1 sprint.** Đầu session chỉ đọc file liên quan đến sprint đó — không đọc toàn bộ spec.
+
+### Cách bắt đầu session
+Mày nói: **"Sprint S01"** → tao đọc `sprints/S01.md` + `CLAUDE.md` → bắt đầu ngay, không hỏi lại.
+
+### Sprint list
+
+| Sprint | Scope | Status |
+|---|---|---|
+| **S01** | Next.js scaffold + Supabase lib + env | ✅ |
+| **S02** | Google Maps cache lib | ⬜ |
+| **S03** | Admin dashboard skeleton + project list | ⬜ |
+| **S04** | HomeMap + mode toggle + pin + bottom sheet | ⬜ |
+| **S05** | Project hub page (14 sections) | ⬜ |
+| **S06** | Search API + filter sidebar | ⬜ |
+| **S07** | Agent signup + KYC + profile page | ⬜ |
+| **S08** | Scraper sale (Cafef + Batdongsan) | ⬜ |
+| **S09** | Scraper rental (Chotot + BDS thuê) | ⬜ |
+| **S10** | AI fill (descriptions + FAQ + embed) | ⬜ |
+
+Chi tiết từng sprint: `sprints/SXX.md`
+
 ## Current Phase
 
-**Phase 0 — Infrastructure Setup (Week 1-2)**
+**Phase 0 — Infrastructure Setup**
+- ✅ GCP + Maps Platform APIs
+- ✅ Supabase project + schema.sql
+- ✅ Vercel + GitHub linked
+- ✅ Next.js scaffold → **Sprint S01**
+- ⏸ Railway scraper service (sau S01)
+- 🔴 Domain (blocked — chờ brand name)
 
-Tasks theo thứ tự ưu tiên:
-1. P0-T01: GCP + Maps Platform APIs (Henry)
-2. P0-T02: Supabase project init + run schema.sql (Henry)
-3. P0-T03: Next.js scaffold + Vercel + env vars (Claude + Henry)
-4. P0-T05: GitHub repo (Henry)
-5. P0-T06: Railway scraper service (Claude + Henry)
+## References
 
-**Blocked**: P0-T04 Domain (chờ brand name final)
-
-Milestone M1 target: End of Week 8:
-- 5000 projects in DB, top 500 AI-filled, top 100 verified
-- **Top 500 dự án có rental data** (avg theo bedroom count)
-- Rental history snapshot daily cron running
-
-## Workplan Reference
-
-Xem `WORKPLAN.md` cho full task list với estimate, dependencies, acceptance criteria.
-Xem `PROJECT_SPEC.md` cho full spec 17 data groups, pricing model, user flows.
-Xem `schema.sql` cho database schema đầy đủ.
+- `WORKPLAN.md` — full task list, estimates, dependencies
+- `PROJECT_SPEC.md` — full spec 17 data groups, pricing, user flows
+- `schema.sql` — database schema đầy đủ
+- `sprints/` — sprint scopes, context cần đọc, done criteria
 
 ## Conventions
 

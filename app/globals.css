@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand colors */
+  --color-primary: #1565FF;
+  --color-primary-dark: #0D1B3D;
+  --color-primary-light: #3D8BFF;
+  --color-bg: #F5F7FA;
+  --color-border: #E6EAF0;
+  --color-text-secondary: #8A94A6;
+
+  /* Semantic */
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+}
+
+@theme inline {
+  --font-sans: var(--font-poppins);
+}
+
+body {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
