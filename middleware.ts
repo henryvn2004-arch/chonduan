@@ -26,9 +26,19 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/dang-nhap'
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(new URL('/dang-nhap', request.url))
+  }
+
+  if (user && request.nextUrl.pathname.startsWith('/dashboard/admin')) {
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('user_type')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.user_type !== 'admin') {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
   }
 
   return supabaseResponse
