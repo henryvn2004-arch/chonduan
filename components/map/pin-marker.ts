@@ -24,52 +24,40 @@ function fmtRent(pin: ProjectPin): string {
   return `${Math.round(pin.rent_2br_avg_monthly_vnd / 1_000_000)}tr/th`
 }
 
-export function createPinElement(pin: ProjectPin, mode: Mode, active = false): HTMLElement {
-  const color =
-    mode === 'sale'
-      ? (TIER_COLORS[pin.tier ?? ''] ?? '#94A3B8')
-      : demandColor(pin.rent_demand_score ?? 5)
+export function getPinColor(pin: ProjectPin, mode: Mode): string {
+  return mode === 'sale'
+    ? (TIER_COLORS[pin.tier ?? ''] ?? '#94A3B8')
+    : demandColor(pin.rent_demand_score ?? 5)
+}
 
-  const label = mode === 'sale' ? fmtSale(pin) : fmtRent(pin)
+export function getPinLabel(pin: ProjectPin, mode: Mode): string {
+  return mode === 'sale' ? fmtSale(pin) : fmtRent(pin)
+}
 
-  const wrapper = document.createElement('div')
-  wrapper.style.cssText = `position: relative; display: inline-block; cursor: pointer;`
+/** SVG data URL icon for google.maps.Marker (no Map ID needed) */
+export function createMarkerIcon(
+  pin: ProjectPin,
+  mode: Mode,
+  active = false
+): { url: string; scaledSize: [number, number]; anchor: [number, number] } {
+  const color = getPinColor(pin, mode)
+  const label = getPinLabel(pin, mode)
+  const w = Math.max(64, label.length * 7 + 20)
+  const h = active ? 30 : 26
+  const r = h / 2
+  const scale = active ? 1 : 1
+  const stroke = active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)'
+  const strokeW = active ? 2.5 : 1.5
 
-  const bubble = document.createElement('div')
-  bubble.style.cssText = `
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: ${color};
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    font-family: Poppins, system-ui, sans-serif;
-    padding: 4px 9px;
-    border-radius: 10px;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    transform: ${active ? 'scale(1.2)' : 'scale(1)'};
-    transition: transform 0.15s ease;
-    user-select: none;
-    border: 2px solid rgba(255,255,255,0.6);
-  `
-  bubble.textContent = label
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h + 6}">
+    <rect x="${strokeW / 2}" y="${strokeW / 2}" width="${w - strokeW}" height="${h - strokeW}" rx="${r}" fill="${color}" stroke="${stroke}" stroke-width="${strokeW}"/>
+    <text x="${w / 2}" y="${h / 2 + 4}" text-anchor="middle" font-size="${active ? 12 : 11}" font-weight="700" fill="white" font-family="system-ui,sans-serif">${label}</text>
+    <polygon points="${w / 2 - 5},${h} ${w / 2 + 5},${h} ${w / 2},${h + 5}" fill="${color}"/>
+  </svg>`
 
-  const arrow = document.createElement('div')
-  arrow.style.cssText = `
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid ${color};
-  `
-
-  wrapper.appendChild(bubble)
-  wrapper.appendChild(arrow)
-  return wrapper
+  return {
+    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+    scaledSize: [w, h + 6],
+    anchor: [w / 2, h + 6],
+  }
 }
