@@ -149,7 +149,7 @@ Mày nói: **"Sprint S01"** → tao đọc `sprints/S01.md` + `CLAUDE.md` → b�
 
 | Sprint | Scope | Status |
 |---|---|---|
-| **S01** | Next.js scaffold + Supabase lib + env | ⬜ |
+| **S01** | Next.js scaffold + Supabase lib + env | ✅ |
 | **S02** | Google Maps cache lib | ⬜ |
 | **S03** | Admin dashboard skeleton + project list | ⬜ |
 | **S04** | HomeMap + mode toggle + pin + bottom sheet | ⬜ |
@@ -168,7 +168,7 @@ Chi tiết từng sprint: `sprints/SXX.md`
 - ✅ GCP + Maps Platform APIs
 - ✅ Supabase project + schema.sql
 - ✅ Vercel + GitHub linked
-- ⬜ Next.js scaffold → **Sprint S01**
+- ✅ Next.js scaffold → **Sprint S01**
 - ⏸ Railway scraper service (sau S01)
 - 🔴 Domain (blocked — chờ brand name)
 
