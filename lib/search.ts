@@ -83,5 +83,5 @@ export async function searchProjects(p: SearchParams): Promise<SearchResponse> {
   const { data, count, error } = await query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
   if (error) throw new Error(error.message)
-  return { results: (data ?? []) as ProjectPin[], total: count ?? 0, page, pageSize: PAGE_SIZE }
+  return { results: (data ?? []) as unknown as ProjectPin[], total: count ?? 0, page, pageSize: PAGE_SIZE }
 }
