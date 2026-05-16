@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Suspense } from 'react'
 import type { SearchResult, Mode } from '@/types/maps'
 import SearchBox from '@/components/map/SearchBox'
@@ -18,12 +19,8 @@ export default function Nav({ mode, onSearchSelect, onGeolocate }: Props) {
       <div className="flex items-center gap-3 px-4 h-14">
         {/* Logo */}
         <Link href="/" className="shrink-0 flex items-center gap-2 mr-1">
-          <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="8" fill="#1565FF" />
-            <path d="M16 6L8 12v14h5v-8h6v8h5V12L16 6z" fill="white" />
-            <rect x="13" y="18" width="6" height="8" fill="#1565FF" />
-          </svg>
-          <span className="font-bold text-[#0D1B3D] text-base tracking-tight hidden sm:block">ChonDuAn</span>
+          <Image src="/logo.png" alt="ChonDuAn" width={140} height={40} className="h-9 w-auto hidden sm:block" priority />
+          <Image src="/favicon.png" alt="ChonDuAn" width={36} height={36} className="h-9 w-auto sm:hidden" priority />
         </Link>
 
         {/* Search */}
