@@ -22,3 +22,29 @@
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
+
+/* Dual range slider — make thumbs interactive, track transparent */
+.range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+.range-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: all;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+}
+.range-thumb::-moz-range-thumb {
+  pointer-events: all;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  border: none;
+}
