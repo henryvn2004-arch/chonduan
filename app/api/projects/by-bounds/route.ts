@@ -149,31 +149,27 @@ export async function GET(req: NextRequest) {
     if (isExpatFriendly)        query = query.eq('is_expat_friendly', true)
   }
 
-  // Amenities
+  // Amenities — cast to any to avoid TS deep instantiation on dynamic column names
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let q: any = query
   for (const amenity of amenities) {
     if (amenity === 'school_any') {
-      // OR across all school boolean fields
-      query = query.or(
+      q = q.or(
         'has_kindergarten.eq.true,has_school_primary.eq.true,' +
         'has_school_secondary.eq.true,has_school_international.eq.true'
       )
       continue
     }
     if (amenity === 'supermarket_any') {
-      // OR: internal supermarket or nearby ≤800m
-      query = query.or('has_supermarket_internal.eq.true,nearest_supermarket_m.lte.800')
+      q = q.or('has_supermarket_internal.eq.true,nearest_supermarket_m.lte.800')
       continue
     }
     const boolCol = AMENITY_BOOL[amenity]
-    if (boolCol) {
-      query = query.eq(boolCol, true)
-      continue
-    }
+    if (boolCol) { q = q.eq(boolCol, true); continue }
     const nearby = AMENITY_NEARBY[amenity]
-    if (nearby) {
-      query = query.lte(nearby.col, nearby.maxM).not(nearby.col, 'is', null)
-    }
+    if (nearby) q = q.lte(nearby.col, nearby.maxM).not(nearby.col, 'is', null)
   }
+  query = q
 
   const { data, error } = await query.limit(100)
 
