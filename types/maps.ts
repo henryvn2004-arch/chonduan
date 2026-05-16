@@ -28,8 +28,9 @@ export interface FilterState {
   price_max: number              // sale: 200=no limit; rent: 200=no limit
   province?: string
   district?: string
+  status?: string                // single-select (used by SearchClient)
   tiers?: string[]               // 'binh_dan'|'trung_cap'|'cao_cap'|'hang_sang'
-  statuses?: string[]            // project_status[]
+  statuses?: string[]            // multi-select (used by FilterSidebar)
 
   // Pháp lý
   red_book_statuses?: string[]   // 'da_cap'|'chua_cap'|'dang_lam'|'vuong_mac'

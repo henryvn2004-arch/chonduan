@@ -60,6 +60,7 @@ export async function GET(req: NextRequest) {
   const priceMax         = parseInt(sp.get('price_max') ?? '0')
 
   // ── Multi-select (comma-separated) ────────────────────
+  const status           = sp.get('status') ?? ''
   const tiers            = csv(sp, 'tiers')
   const statuses         = csv(sp, 'statuses')
   const redBookStatuses  = csv(sp, 'red_book_statuses')
@@ -109,6 +110,7 @@ export async function GET(req: NextRequest) {
 
   if (propertyType) query = query.eq('property_type', propertyType)
 
+  if (status)                 query = query.eq('status', status)
   if (tiers.length)           query = query.in('tier', tiers)
   if (statuses.length)        query = query.in('status', statuses)
   if (redBookStatuses.length) query = query.in('red_book_status', redBookStatuses)
