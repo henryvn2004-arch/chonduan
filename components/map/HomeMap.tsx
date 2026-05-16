@@ -1,24 +1,17 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import { setOptions, importLibrary } from '@googlemaps/js-api-loader'
-import { MarkerClusterer } from '@googlemaps/markerclusterer'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import type { ProjectPin, Mode, SearchResult, FilterState } from '@/types/maps'
 import { createMarkerIcon } from './pin-marker'
 
-const DEFAULT_CENTER = { lat: 10.7769, lng: 106.7009 } // HCMC
-const DEFAULT_ZOOM = 12
+const DEFAULT_CENTER: [number, number] = [106.7009, 10.7769] // HCMC [lng, lat]
+const DEFAULT_ZOOM = 11
 
-let mapsInitialized = false
-function initMapsOptions(apiKey: string) {
-  if (mapsInitialized) return
-  mapsInitialized = true
-  console.log('[Maps] key length:', apiKey.length, '| first4:', apiKey.slice(0, 4))
-  setOptions({ key: apiKey, v: 'weekly' })
-}
+const STYLE_URL = `https://maps.vietmap.vn/api/maps/light/styles.json?apikey=${process.env.NEXT_PUBLIC_VIETMAP_API_KEY ?? ''}`
 
 interface Props {
-  mapsApiKey: string
   mode: Mode
   flyTo?: SearchResult | null
   filters: FilterState
@@ -28,20 +21,29 @@ interface Props {
   onGeolocateReady?: (fn: () => void) => void
 }
 
-export default function HomeMap({
-  mapsApiKey,
-  mode,
-  flyTo,
-  filters,
-  selectedPin,
-  onPinSelect,
-  onPinsUpdate,
-  onGeolocateReady,
-}: Props) {
+function makeMarkerEl(pin: ProjectPin, mode: Mode, active: boolean): HTMLImageElement {
+  const cfg = createMarkerIcon(pin, mode, active)
+  const img = document.createElement('img')
+  img.src = cfg.url
+  img.width = cfg.scaledSize[0]
+  img.height = cfg.scaledSize[1]
+  img.style.cursor = 'pointer'
+  img.draggable = false
+  return img
+}
+
+function updateMarkerEl(el: HTMLElement, pin: ProjectPin, mode: Mode, active: boolean) {
+  const cfg = createMarkerIcon(pin, mode, active)
+  const img = el as HTMLImageElement
+  img.src = cfg.url
+  img.width = cfg.scaledSize[0]
+  img.height = cfg.scaledSize[1]
+}
+
+export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect, onPinsUpdate, onGeolocateReady }: Props) {
   const mapDivRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<google.maps.Map | null>(null)
-  const markersRef = useRef<Map<string, google.maps.Marker>>(new Map())
-  const clustererRef = useRef<MarkerClusterer | null>(null)
+  const mapRef = useRef<maplibregl.Map | null>(null)
+  const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map())
   const pinsDataRef = useRef<Map<string, ProjectPin>>(new Map())
   const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const filtersRef = useRef(filters)
@@ -50,7 +52,6 @@ export default function HomeMap({
 
   const [mapReady, setMapReady] = useState(false)
   const [locating, setLocating] = useState(false)
-  const [mapMoved, setMapMoved] = useState(false)
 
   filtersRef.current = filters
   modeRef.current = mode
@@ -61,8 +62,7 @@ export default function HomeMap({
     setLocating(true)
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        mapRef.current?.panTo({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        mapRef.current?.setZoom(14)
+        mapRef.current?.flyTo({ center: [pos.coords.longitude, pos.coords.latitude], zoom: 14 })
         setLocating(false)
       },
       () => setLocating(false)
@@ -75,82 +75,57 @@ export default function HomeMap({
 
   // Init map once
   useEffect(() => {
-    let cancelled = false
-    async function init() {
-      initMapsOptions(mapsApiKey)
-      await importLibrary('maps')
-      if (cancelled || !mapDivRef.current) return
+    if (!mapDivRef.current) return
+    const map = new maplibregl.Map({
+      container: mapDivRef.current,
+      style: STYLE_URL,
+      center: DEFAULT_CENTER,
+      zoom: DEFAULT_ZOOM,
+      attributionControl: false,
+    })
 
-      const map = new google.maps.Map(mapDivRef.current, {
-        center: DEFAULT_CENTER,
-        zoom: DEFAULT_ZOOM,
-        disableDefaultUI: true,
-        zoomControl: true,
-        zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
-        gestureHandling: 'greedy',
-        clickableIcons: false,
-        styles: [
-          { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-        ],
-      })
-
+    map.on('load', () => {
       mapRef.current = map
-      clustererRef.current = new MarkerClusterer({ map })
       setMapReady(true)
+    })
+
+    return () => {
+      map.remove()
+      mapRef.current = null
     }
-    init()
-    return () => { cancelled = true }
   }, [])
 
   const renderPins = useCallback((pins: ProjectPin[], m: Mode, selId: string | null) => {
     const map = mapRef.current
-    const clusterer = clustererRef.current
-    if (!map || !clusterer) return
+    if (!map) return
 
-    const incoming = new Map(pins.map((p) => [p.id, p]))
+    const incoming = new Map(pins.map(p => [p.id, p]))
 
     for (const [id, marker] of markersRef.current) {
       if (!incoming.has(id)) {
-        marker.setMap(null)
-        clusterer.removeMarker(marker)
+        marker.remove()
         markersRef.current.delete(id)
         pinsDataRef.current.delete(id)
       }
     }
 
-    const toAdd: google.maps.Marker[] = []
-
     for (const pin of pins) {
       pinsDataRef.current.set(pin.id, pin)
       const isActive = selId === pin.id
-      const iconConfig = createMarkerIcon(pin, m, isActive)
-      const icon: google.maps.Icon = {
-        url: iconConfig.url,
-        scaledSize: new google.maps.Size(...iconConfig.scaledSize),
-        anchor: new google.maps.Point(...iconConfig.anchor),
-      }
 
       if (markersRef.current.has(pin.id)) {
-        markersRef.current.get(pin.id)!.setIcon(icon)
+        updateMarkerEl(markersRef.current.get(pin.id)!.getElement(), pin, m, isActive)
         continue
       }
 
-      const marker = new google.maps.Marker({
-        position: { lat: Number(pin.lat), lng: Number(pin.lng) },
-        icon,
-        title: pin.name_official,
-        optimized: false,
-      })
+      const el = makeMarkerEl(pin, m, isActive)
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([Number(pin.lng), Number(pin.lat)])
+        .addTo(map)
 
-      marker.addListener('click', () => {
-        onPinSelect(pin)
-      })
-
+      el.addEventListener('click', () => onPinSelect(pin))
       markersRef.current.set(pin.id, marker)
-      toAdd.push(marker)
     }
-
-    if (toAdd.length > 0) clusterer.addMarkers(toAdd)
   }, [onPinSelect])
 
   const fetchPins = useCallback(async (m: Mode, f: FilterState) => {
@@ -158,14 +133,12 @@ export default function HomeMap({
     if (!map) return
     const bounds = map.getBounds()
     if (!bounds) return
-    const sw = bounds.getSouthWest()
-    const ne = bounds.getNorthEast()
 
     const params = new URLSearchParams({
-      swLat: String(sw.lat()),
-      swLng: String(sw.lng()),
-      neLat: String(ne.lat()),
-      neLng: String(ne.lng()),
+      swLat: String(bounds.getSouth()),
+      swLng: String(bounds.getWest()),
+      neLat: String(bounds.getNorth()),
+      neLng: String(bounds.getEast()),
       mode: m,
     })
     if (f.property_type) params.set('property_type', f.property_type)
@@ -178,27 +151,19 @@ export default function HomeMap({
       const pins: ProjectPin[] = await res.json()
       renderPins(pins, m, selectedPinIdRef.current)
       onPinsUpdate(pins)
-      setMapMoved(false)
     } catch { /* ignore */ }
   }, [renderPins, onPinsUpdate])
 
   // Update marker icons when selectedPin changes
   useEffect(() => {
-    const m = modeRef.current
     for (const [id, marker] of markersRef.current) {
       const pin = pinsDataRef.current.get(id)
       if (!pin) continue
-      const isActive = selectedPin?.id === id
-      const iconConfig = createMarkerIcon(pin, m, isActive)
-      marker.setIcon({
-        url: iconConfig.url,
-        scaledSize: new google.maps.Size(...iconConfig.scaledSize),
-        anchor: new google.maps.Point(...iconConfig.anchor),
-      })
+      updateMarkerEl(marker.getElement(), pin, modeRef.current, selectedPin?.id === id)
     }
   }, [selectedPin])
 
-  // Re-register bounds listener on mode/filters change
+  // Re-fetch on mode/filters/mapReady change
   useEffect(() => {
     if (!mapReady) return
     const map = mapRef.current!
@@ -206,31 +171,24 @@ export default function HomeMap({
     for (const [id, marker] of markersRef.current) {
       const pin = pinsDataRef.current.get(id)
       if (!pin) continue
-      const iconConfig = createMarkerIcon(pin, mode, selectedPin?.id === id)
-      marker.setIcon({
-        url: iconConfig.url,
-        scaledSize: new google.maps.Size(...iconConfig.scaledSize),
-        anchor: new google.maps.Point(...iconConfig.anchor),
-      })
+      updateMarkerEl(marker.getElement(), pin, mode, selectedPin?.id === id)
     }
 
     const handler = () => {
-      setMapMoved(true)
       if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current)
       fetchTimerRef.current = setTimeout(() => fetchPins(modeRef.current, filtersRef.current), 400)
     }
 
-    const listener = map.addListener('bounds_changed', handler)
+    map.on('moveend', handler)
     fetchPins(mode, filters)
-    return () => google.maps.event.removeListener(listener)
+    return () => { map.off('moveend', handler) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapReady, mode, filters])
 
   // Fly to search result
   useEffect(() => {
     if (!flyTo || !mapReady || !flyTo.lat || !flyTo.lng) return
-    mapRef.current?.panTo({ lat: flyTo.lat, lng: flyTo.lng })
-    mapRef.current?.setZoom(15)
+    mapRef.current?.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: 15 })
   }, [flyTo, mapReady])
 
   return (
@@ -246,7 +204,6 @@ export default function HomeMap({
         </div>
       )}
 
-      {/* Search this area button */}
       {mapReady && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
           <button
@@ -261,7 +218,6 @@ export default function HomeMap({
         </div>
       )}
 
-      {/* Geolocate button */}
       <button
         onClick={geolocate}
         disabled={locating}
@@ -278,7 +234,6 @@ export default function HomeMap({
         )}
       </button>
 
-      {/* Layers button */}
       <button className="absolute bottom-20 left-3 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-[#F1F5F9] transition-colors border border-[#E2E8F0]">
         <svg className="w-5 h-5 text-[#64748B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
