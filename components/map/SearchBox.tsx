@@ -70,7 +70,7 @@ export default function SearchBox({ onSelect }: Props) {
         </svg>
         <input
           className="flex-1 text-sm text-[#0D1B3D] placeholder-[#94A3B8] bg-transparent outline-none min-w-0"
-          placeholder="Tìm dự án, tên chủ đầu tư..."
+          placeholder="Tìm dự án, khu vực, đường, địa điểm..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
