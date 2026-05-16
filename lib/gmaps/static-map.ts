@@ -35,7 +35,7 @@ export function staticMapUrl(options: StaticMapOptions): string {
     markers = [],
   } = options
 
-  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!
+  const key = process.env.GOOGLE_MAPS_API_KEY!
   const params = new URLSearchParams({
     center: `${lat},${lng}`,
     zoom: String(zoom),

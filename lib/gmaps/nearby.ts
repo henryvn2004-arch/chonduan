@@ -22,7 +22,7 @@ export async function nearbySearch(
   const cached = await getNearbyCache(lat, lng, radiusM, category)
   if (cached) return cached as NearbyPlace[]
 
-  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!
+  const key = process.env.GOOGLE_MAPS_API_KEY!
   const res = await fetch(
     `${GMAPS_BASE}/place/nearbysearch/json` +
       `?location=${lat},${lng}&radius=${radiusM}&type=${encodeURIComponent(category)}&key=${key}`

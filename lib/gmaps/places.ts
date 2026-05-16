@@ -27,7 +27,7 @@ export async function textSearch(
   query: string,
   options?: { region?: string }
 ): Promise<PlaceResult[]> {
-  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!
+  const key = process.env.GOOGLE_MAPS_API_KEY!
   const params = new URLSearchParams({ query, key })
   if (options?.region) params.set('region', options.region)
 
@@ -52,7 +52,7 @@ export async function getPlaceDetails(placeId: string): Promise<PlaceResult | nu
   const cached = await getPlaceCache(placeId)
   if (cached) return cached
 
-  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!
+  const key = process.env.GOOGLE_MAPS_API_KEY!
   const fields = 'place_id,name,formatted_address,geometry,types,rating,user_ratings_total'
   const res = await fetch(
     `${GMAPS_BASE}/place/details/json?place_id=${placeId}&fields=${fields}&key=${key}`

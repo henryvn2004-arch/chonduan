@@ -17,7 +17,7 @@ export async function geocode(address: string): Promise<GeocodeResult | null> {
   const cached = await getGeocodeCache(hash)
   if (cached) return cached
 
-  const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!
+  const key = process.env.GOOGLE_MAPS_API_KEY!
   const res = await fetch(
     `${GMAPS_BASE}/geocode/json?address=${encodeURIComponent(address)}&key=${key}`
   )
