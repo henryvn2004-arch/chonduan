@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import GeocodeBatchButton from './GeocodeBatchButton'
 
 const DATA_QUALITY_LABEL: Record<string, string> = {
   auto: 'Auto',
@@ -34,7 +35,10 @@ export default async function AdminProjectListPage() {
           <h1 className="text-xl font-bold text-[#0D1B3D]">Admin — Dự án</h1>
           <p className="text-xs text-[#8A94A6] mt-0.5">{projects?.length ?? 0} dự án</p>
         </div>
-        <LogoutButton />
+        <div className="flex items-center gap-4">
+          <GeocodeBatchButton />
+          <LogoutButton />
+        </div>
       </header>
 
       <div className="p-6">
