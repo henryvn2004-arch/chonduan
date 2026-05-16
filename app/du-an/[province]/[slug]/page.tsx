@@ -61,7 +61,6 @@ async function fetchProject(province: string, slug: string): Promise<ProjectDeta
       developers ( id, slug, name, short_name, logo_url, website, founded_year, ranking_tier )
     `)
     .eq('slug', slug)
-    .eq('province', province)
     .single()
 
   if (!project) return null
