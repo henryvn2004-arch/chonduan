@@ -77,6 +77,12 @@ export async function GET(req: NextRequest) {
   const yearHandoverMax    = parseInt(sp.get('year_handover_max') ?? '0')
   const floodRiskMaxRaw    = sp.get('flood_risk_max')
   const floodRiskMax       = floodRiskMaxRaw !== null ? parseInt(floodRiskMaxRaw) : null
+  const rent2brMin         = parseInt(sp.get('rent_2br_min') ?? '0')
+  const rent2brMax         = parseInt(sp.get('rent_2br_max') ?? '0')
+  const rentalYieldPctMin  = parseFloat(sp.get('rental_yield_pct_min') ?? '0')
+
+  // ── Text search ───────────────────────────────────────
+  const developerSearch    = sp.get('developer_search') ?? ''
 
   // ── Rent-mode params ──────────────────────────────────
   const rentDemandScoreMin = parseInt(sp.get('rent_demand_score_min') ?? '0')
@@ -128,6 +134,15 @@ export async function GET(req: NextRequest) {
   if (yearHandoverMax > 0)    query = query.lte('year_handover', yearHandoverMax)
   if (floodRiskMax !== null)  query = query.lte('flood_risk_level', floodRiskMax)
 
+  // Rent price + yield (always, not mode-gated — useful for sale investors too)
+  if (rent2brMin > 0)         query = query.gte('rent_2br_avg_monthly_vnd', rent2brMin * 1_000_000)
+  if (rent2brMax > 0 && rent2brMax < 100) query = query.lte('rent_2br_avg_monthly_vnd', rent2brMax * 1_000_000)
+  if (rentalYieldPctMin > 0)  query = query.gte('rental_yield_pct', rentalYieldPctMin)
+
+  // Developer text search (ilike on developers table via join not possible here — filter post-fetch or use RPC)
+  // For now: skip developer_search in this endpoint (handled by /api/search)
+  void developerSearch
+
   if (mode === 'rent_long') {
     if (rentDemandScoreMin > 0) query = query.gte('rent_demand_score', rentDemandScoreMin)
     if (rentTrend)              query = query.eq('rent_trend', rentTrend)
@@ -136,6 +151,19 @@ export async function GET(req: NextRequest) {
 
   // Amenities
   for (const amenity of amenities) {
+    if (amenity === 'school_any') {
+      // OR across all school boolean fields
+      query = query.or(
+        'has_kindergarten.eq.true,has_school_primary.eq.true,' +
+        'has_school_secondary.eq.true,has_school_international.eq.true'
+      )
+      continue
+    }
+    if (amenity === 'supermarket_any') {
+      // OR: internal supermarket or nearby ≤800m
+      query = query.or('has_supermarket_internal.eq.true,nearest_supermarket_m.lte.800')
+      continue
+    }
     const boolCol = AMENITY_BOOL[amenity]
     if (boolCol) {
       query = query.eq(boolCol, true)

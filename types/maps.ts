@@ -55,9 +55,14 @@ export interface FilterState {
   bql_rating_min?: number        // 0-5
   review_rating_min?: number     // 0-5
 
+  // Cho thuê & Đầu tư (luôn visible — investor ở sale mode cũng dùng)
+  rent_2br_min?: number          // tr/tháng
+  rent_2br_max?: number          // tr/tháng, 0=no limit
+  rental_yield_pct_min?: number  // %, e.g. 3 | 5 | 7
+
   // Cho thuê (chỉ dùng khi mode=rent_long)
-  rent_demand_score_min?: number // 1-10
-  rent_trend?: string            // 'up'|'flat'|'down'
+  rent_demand_score_min?: number
+  rent_trend?: string
   is_expat_friendly?: boolean
 }
 
