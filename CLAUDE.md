@@ -150,15 +150,15 @@ Mày nói: **"Sprint S01"** → tao đọc `sprints/S01.md` + `CLAUDE.md` → b�
 | Sprint | Scope | Status |
 |---|---|---|
 | **S01** | Next.js scaffold + Supabase lib + env | ✅ |
-| **S02** | Google Maps cache lib | ⬜ |
-| **S03** | Admin dashboard skeleton + project list | ⬜ |
-| **S04** | HomeMap + mode toggle + pin + bottom sheet | ⬜ |
-| **S05** | Project hub page (14 sections) | ⬜ |
-| **S06** | Search API + filter sidebar | ⬜ |
-| **S07** | Agent signup + KYC + profile page | ⬜ |
-| **S08** | Scraper sale (Cafef + Batdongsan) | ⬜ |
-| **S09** | Scraper rental (Chotot + BDS thuê) | ⬜ |
-| **S10** | AI fill (descriptions + FAQ + embed) | ⬜ |
+| **S02** | Google Maps cache lib | ✅ |
+| **S03** | Admin dashboard skeleton + project list | ✅ |
+| **S04** | HomeMap + mode toggle + pin + bottom sheet | ✅ |
+| **S05** | Project hub page (14 sections) | ✅ |
+| **S06** | Search API + filter sidebar | ✅ |
+| **S07** | Agent signup + KYC + profile page | ✅ |
+| **S08** | Scraper sale (Cafef + Batdongsan) | ✅ |
+| **S09** | Scraper rental (Chotot + BDS thuê) | ✅ |
+| **S10** | AI fill (descriptions + FAQ + embed) | 🔄 |
 
 Chi tiết từng sprint: `sprints/SXX.md`
 
