@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { SearchResult } from '@/types/maps'
 
 interface Props {
@@ -14,6 +15,8 @@ export default function SearchBox({ onSelect }: Props) {
   const [loading, setLoading] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     if (query.length < 2) {
@@ -51,6 +54,14 @@ export default function SearchBox({ onSelect }: Props) {
     onSelect(r)
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter' && query.trim().length >= 2) {
+      setOpen(false)
+      const mode = searchParams.get('mode') ?? 'sale'
+      router.push(`/tim-kiem?q=${encodeURIComponent(query.trim())}&mode=${mode}`)
+    }
+  }
+
   return (
     <div ref={containerRef} className="relative w-full max-w-md">
       <div className="flex items-center gap-2 bg-white border border-[#E2E8F0] rounded-xl px-3 py-2 shadow-sm focus-within:border-[#1565FF] transition-colors">
@@ -63,6 +74,7 @@ export default function SearchBox({ onSelect }: Props) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
+          onKeyDown={handleKeyDown}
         />
         {loading && (
           <div className="w-4 h-4 border-2 border-[#1565FF] border-t-transparent rounded-full animate-spin shrink-0" />

@@ -8,7 +8,19 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(npx tsc *)",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Bash(gh pr create --title 'feat\\(S05\\): homepage map redesign — 3-panel layout per mockup' --body ' *)",
+      "mcp__02f70000-fec6-4b1d-ae29-702a2cc3459b__list_teams",
+      "mcp__02f70000-fec6-4b1d-ae29-702a2cc3459b__list_projects",
+      "mcp__02f70000-fec6-4b1d-ae29-702a2cc3459b__deploy_to_vercel",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(git merge *)",
+      "Bash(cat \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.env.local\" 2>/dev/null | grep -i \"maps\\\\|google\\\\|vercel\" || echo \"not found\")",
+      "Bash(Remove-Item \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\great-nightingale-c0af3c\\\\public\\\\logo-icon.svg\" -Force)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\great-nightingale-c0af3c\\\\app\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)",
+      "Bash(head -50 node_modules/@googlemaps/js-api-loader/dist/index.esm.js)",
+      "Bash(head -50 node_modules/@googlemaps/js-api-loader/dist/index.js)"
     ]
   }
 }
