@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import maplibregl from 'maplibre-gl'
-import 'maplibre-gl/dist/maplibre-gl.css'
+import vietmapgl from '@vietmap/vietmap-gl-js'
+import '@vietmap/vietmap-gl-js/dist/vietmap-gl.css'
 import type { ProjectPin, Mode, SearchResult, FilterState } from '@/types/maps'
 import { createMarkerIcon } from './pin-marker'
 
@@ -42,8 +42,8 @@ function updateMarkerEl(el: HTMLElement, pin: ProjectPin, mode: Mode, active: bo
 
 export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect, onPinsUpdate, onGeolocateReady }: Props) {
   const mapDivRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<maplibregl.Map | null>(null)
-  const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map())
+  const mapRef = useRef<vietmapgl.Map | null>(null)
+  const markersRef = useRef<Map<string, vietmapgl.Marker>>(new Map())
   const pinsDataRef = useRef<Map<string, ProjectPin>>(new Map())
   const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const filtersRef = useRef(filters)
@@ -76,7 +76,7 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
   // Init map once
   useEffect(() => {
     if (!mapDivRef.current) return
-    const map = new maplibregl.Map({
+    const map = new vietmapgl.Map({
       container: mapDivRef.current,
       style: STYLE_URL,
       center: DEFAULT_CENTER,
@@ -119,7 +119,7 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
       }
 
       const el = makeMarkerEl(pin, m, isActive)
-      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+      const marker = new vietmapgl.Marker({ element: el, anchor: 'bottom' })
         .setLngLat([Number(pin.lng), Number(pin.lat)])
         .addTo(map)
 
