@@ -50,6 +50,7 @@ export default function MapPage() {
         {/* Left: Filter sidebar (desktop only) */}
         <div className="hidden md:flex">
           <FilterSidebar
+            mode={mode}
             filters={filters}
             onChange={handleFiltersChange}
             count={pins.length}

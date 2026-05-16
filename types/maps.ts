@@ -22,15 +22,43 @@ export interface ProjectPin {
 }
 
 export interface FilterState {
-  property_type: string
-  price_min: number   // sale: tỷ VND; rent: tr/tháng
-  price_max: number   // sale: tỷ (100=no limit); rent: tr/tháng (100=no limit)
+  // Cơ bản
+  property_type: string          // '' = all
+  price_min: number              // sale: tr/m²; rent: tr/tháng
+  price_max: number              // sale: 200=no limit; rent: 200=no limit
   province?: string
   district?: string
-  status?: string
-  amenities?: string[]  // 'pool' | 'gym' | 'school' | 'mall'
-  investment_score_min?: number
-  bedrooms?: string   // '1' | '2' | '3' | '4+'
+  tiers?: string[]               // 'binh_dan'|'trung_cap'|'cao_cap'|'hang_sang'
+  statuses?: string[]            // project_status[]
+
+  // Pháp lý
+  red_book_statuses?: string[]   // 'da_cap'|'chua_cap'|'dang_lam'|'vuong_mac'
+  land_origin_types?: string[]   // 'dat_o'|'dat_thuong_mai'|'dat_chuyen_doi'|'khac'
+  ownership_terms?: string[]     // 'lau_dai'|'nam_70'|'nam_50'
+  legal_score_min?: number       // 1-10
+
+  // Tiện ích — nội khu (boolean) + xung quanh (≤800m)
+  amenities?: string[]
+
+  // Rủi ro
+  flood_risk_max?: number        // 0=không|1=thấp|2=tb|3=cao
+  noise_levels?: string[]        // 'quiet'|'moderate'|'noisy'
+
+  // Phong thủy
+  main_directions?: string[]     // 'dong'|'tay'|'nam'|'bac'|'dong_nam'|...
+  birth_year?: number            // dùng tính can chi hợp mệnh
+
+  // Nâng cao
+  developer_search?: string
+  year_handover_max?: number
+  investment_score_min?: number  // 1-10
+  bql_rating_min?: number        // 0-5
+  review_rating_min?: number     // 0-5
+
+  // Cho thuê (chỉ dùng khi mode=rent_long)
+  rent_demand_score_min?: number // 1-10
+  rent_trend?: string            // 'up'|'flat'|'down'
+  is_expat_friendly?: boolean
 }
 
 export interface SearchResult {
