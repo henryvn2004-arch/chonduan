@@ -18,8 +18,17 @@ const STYLE: maplibregl.StyleSpecification = {
       tileSize: 256,
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     },
+    satellite: {
+      type: 'raster',
+      tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+      tileSize: 256,
+      attribution: '© <a href="https://www.esri.com">Esri</a>',
+    },
   },
-  layers: [{ id: 'osm', type: 'raster', source: 'osm' }],
+  layers: [
+    { id: 'osm', type: 'raster', source: 'osm' },
+    { id: 'satellite', type: 'raster', source: 'satellite', layout: { visibility: 'none' } },
+  ],
 }
 
 interface Props {
@@ -63,6 +72,7 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
 
   const [mapReady, setMapReady] = useState(false)
   const [locating, setLocating] = useState(false)
+  const [satellite, setSatellite] = useState(false)
 
   filtersRef.current = filters
   modeRef.current = mode
@@ -245,8 +255,19 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
         )}
       </button>
 
-      <button className="absolute bottom-20 left-3 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-[#F1F5F9] transition-colors border border-[#E2E8F0]">
-        <svg className="w-5 h-5 text-[#64748B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <button
+        onClick={() => {
+          const map = mapRef.current
+          if (!map) return
+          const next = !satellite
+          map.setLayoutProperty('satellite', 'visibility', next ? 'visible' : 'none')
+          map.setLayoutProperty('osm', 'visibility', next ? 'none' : 'visible')
+          setSatellite(next)
+        }}
+        className={`absolute bottom-20 left-3 z-10 w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-colors border ${satellite ? 'bg-[#1565FF] border-[#1565FF]' : 'bg-white border-[#E2E8F0] hover:bg-[#F1F5F9]'}`}
+        title={satellite ? 'Bản đồ' : 'Vệ tinh'}
+      >
+        <svg className={`w-5 h-5 ${satellite ? 'text-white' : 'text-[#64748B]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
         </svg>
       </button>
