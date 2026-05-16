@@ -93,6 +93,31 @@ export default function ProjectHero({ project }: { project: ProjectDetail }) {
             {project.description_short}
           </p>
         )}
+
+        <div className="mt-3 flex gap-2">
+          <a
+            href={`https://www.google.com/maps/search/${encodeURIComponent(project.name_official + ' ' + (project.province ?? ''))}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            Xem trên Google Maps
+          </a>
+          <a
+            href={`https://www.google.com/search?q=${encodeURIComponent(project.name_official + ' ' + (project.province ?? ''))}&tbm=isch`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>
+            </svg>
+            Xem thêm ảnh
+          </a>
+        </div>
       </div>
     </div>
   )
