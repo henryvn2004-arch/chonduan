@@ -23,8 +23,14 @@ export interface ProjectPin {
 
 export interface FilterState {
   property_type: string
-  price_min: number
-  price_max: number
+  price_min: number   // sale: tỷ VND; rent: tr/tháng
+  price_max: number   // sale: tỷ (100=no limit); rent: tr/tháng (100=no limit)
+  province?: string
+  district?: string
+  status?: string
+  amenities?: string[]  // 'pool' | 'gym' | 'school' | 'mall'
+  investment_score_min?: number
+  bedrooms?: string   // '1' | '2' | '3' | '4+'
 }
 
 export interface SearchResult {
