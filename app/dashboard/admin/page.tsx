@@ -19,6 +19,17 @@ const DATA_QUALITY_COLOR: Record<string, string> = {
 export default async function AdminProjectListPage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/dang-nhap')
+
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('user_type')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.user_type !== 'admin') redirect('/dang-nhap')
+
   const { data: projects, error } = await supabase
     .from('projects')
     .select('id, name_official, province, data_quality, published, updated_at')
