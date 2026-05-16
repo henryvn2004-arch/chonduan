@@ -252,13 +252,14 @@ interface Props {
   filters: FilterState
   onChange: (f: FilterState) => void
   count: number
+  mobile?: boolean  // when true: full-width, no border-r, no own header
 }
 
 const DEFAULT_FILTERS: FilterState = {
   property_type: '', price_min: 0, price_max: PRICE_MAX,
 }
 
-export default function FilterSidebar({ mode, filters, onChange, count }: Props) {
+export default function FilterSidebar({ mode, filters, onChange, count, mobile }: Props) {
   const [local, setLocal] = useState<FilterState>(filters)
 
   const update = useCallback((patch: Partial<FilterState>) => {
@@ -291,17 +292,29 @@ export default function FilterSidebar({ mode, filters, onChange, count }: Props)
     || !!local.province || !!local.district
 
   return (
-    <aside className="w-[232px] shrink-0 bg-white border-r border-[#E2E8F0] flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#E2E8F0] shrink-0">
-        <span className="font-semibold text-sm text-[#0D1B3D]">Bộ lọc</span>
-        {hasActive && (
+    <aside className={mobile ? 'w-full bg-white flex flex-col' : 'w-[232px] shrink-0 bg-white border-r border-[#E2E8F0] flex flex-col h-full'}>
+      {/* Header — hidden in mobile drawer (drawer has its own header) */}
+      {!mobile && (
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#E2E8F0] shrink-0">
+          <span className="font-semibold text-sm text-[#0D1B3D]">Bộ lọc</span>
+          {hasActive && (
+            <button onClick={clearAll}
+              className="text-[11px] text-[#1565FF] font-medium hover:text-[#0D4FCC] transition-colors">
+              Xóa bộ lọc
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Clear all button in mobile mode */}
+      {mobile && hasActive && (
+        <div className="flex justify-end px-4 pt-2">
           <button onClick={clearAll}
             className="text-[11px] text-[#1565FF] font-medium hover:text-[#0D4FCC] transition-colors">
             Xóa bộ lọc
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto px-3 py-1 space-y-0">
 

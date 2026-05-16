@@ -9,7 +9,6 @@ async function fetchSimilar(province: string, currentId: string) {
     .select('id, slug, name_official, province, district, banner_url, price_primary_per_m2_min, tier')
     .eq('province', province)
     .neq('id', currentId)
-    .not('published', 'eq', false)
     .limit(4)
   return data ?? []
 }
@@ -40,7 +39,7 @@ export default async function SimilarSection({
         {projects.map((p) => (
           <Link
             key={p.id}
-            href={`/du-an/${p.province}/${p.slug}`}
+            href={`/du-an/${p.province.toLowerCase().replace(/\s+/g, '-')}/${p.slug}`}
             className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover:shadow-md transition-shadow"
           >
             <div className="relative h-28 bg-[#F1F5F9]">
