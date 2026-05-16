@@ -1,15 +1,26 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
-import vietmapgl from '@vietmap/vietmap-gl-js'
-import '@vietmap/vietmap-gl-js/dist/vietmap-gl.css'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import type { ProjectPin, Mode, SearchResult, FilterState } from '@/types/maps'
 import { createMarkerIcon } from './pin-marker'
 
 const DEFAULT_CENTER: [number, number] = [106.7009, 10.7769] // HCMC [lng, lat]
 const DEFAULT_ZOOM = 11
 
-const STYLE_URL = `https://maps.vietmap.vn/api/maps/light/styles.json?apikey=${process.env.NEXT_PUBLIC_VIETMAP_API_KEY ?? ''}`
+const STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  sources: {
+    osm: {
+      type: 'raster',
+      tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+      tileSize: 256,
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  },
+  layers: [{ id: 'osm', type: 'raster', source: 'osm' }],
+}
 
 interface Props {
   mode: Mode
@@ -42,8 +53,8 @@ function updateMarkerEl(el: HTMLElement, pin: ProjectPin, mode: Mode, active: bo
 
 export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect, onPinsUpdate, onGeolocateReady }: Props) {
   const mapDivRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<vietmapgl.Map | null>(null)
-  const markersRef = useRef<Map<string, vietmapgl.Marker>>(new Map())
+  const mapRef = useRef<maplibregl.Map | null>(null)
+  const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map())
   const pinsDataRef = useRef<Map<string, ProjectPin>>(new Map())
   const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const filtersRef = useRef(filters)
@@ -76,9 +87,9 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
   // Init map once
   useEffect(() => {
     if (!mapDivRef.current) return
-    const map = new vietmapgl.Map({
+    const map = new maplibregl.Map({
       container: mapDivRef.current,
-      style: STYLE_URL,
+      style: STYLE,
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
       attributionControl: false,
@@ -119,7 +130,7 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
       }
 
       const el = makeMarkerEl(pin, m, isActive)
-      const marker = new vietmapgl.Marker({ element: el, anchor: 'bottom' })
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
         .setLngLat([Number(pin.lng), Number(pin.lat)])
         .addTo(map)
 
