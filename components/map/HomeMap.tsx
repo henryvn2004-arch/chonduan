@@ -13,6 +13,7 @@ let mapsInitialized = false
 function initMapsOptions(apiKey: string) {
   if (mapsInitialized) return
   mapsInitialized = true
+  console.log('[Maps] key length:', apiKey.length, '| first4:', apiKey.slice(0, 4))
   setOptions({ key: apiKey, v: 'weekly' })
 }
 
