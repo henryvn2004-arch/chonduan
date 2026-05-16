@@ -162,9 +162,27 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
       neLng: String(bounds.getEast()),
       mode: m,
     })
+
     if (f.property_type) params.set('property_type', f.property_type)
     if (f.price_min > 0) params.set('price_min', String(f.price_min))
-    if (f.price_max < 100) params.set('price_max', String(f.price_max))
+    if (f.price_max < 200) params.set('price_max', String(f.price_max))
+    if (f.tiers?.length)            params.set('tiers', f.tiers.join(','))
+    if (f.statuses?.length)         params.set('statuses', f.statuses.join(','))
+    if (f.red_book_statuses?.length) params.set('red_book_statuses', f.red_book_statuses.join(','))
+    if (f.land_origin_types?.length) params.set('land_origin_types', f.land_origin_types.join(','))
+    if (f.ownership_terms?.length)  params.set('ownership_terms', f.ownership_terms.join(','))
+    if (f.main_directions?.length)  params.set('main_directions', f.main_directions.join(','))
+    if (f.noise_levels?.length)     params.set('noise_levels', f.noise_levels.join(','))
+    if (f.amenities?.length)        params.set('amenities', f.amenities.join(','))
+    if (f.legal_score_min)          params.set('legal_score_min', String(f.legal_score_min))
+    if (f.investment_score_min)     params.set('investment_score_min', String(f.investment_score_min))
+    if (f.bql_rating_min)           params.set('bql_rating_min', String(f.bql_rating_min))
+    if (f.review_rating_min)        params.set('review_rating_min', String(f.review_rating_min))
+    if (f.year_handover_max)        params.set('year_handover_max', String(f.year_handover_max))
+    if (f.flood_risk_max !== undefined) params.set('flood_risk_max', String(f.flood_risk_max))
+    if (f.rent_demand_score_min)    params.set('rent_demand_score_min', String(f.rent_demand_score_min))
+    if (f.rent_trend)               params.set('rent_trend', f.rent_trend)
+    if (f.is_expat_friendly)        params.set('is_expat_friendly', 'true')
 
     try {
       const res = await fetch(`/api/projects/by-bounds?${params}`)

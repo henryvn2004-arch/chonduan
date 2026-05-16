@@ -3,8 +3,46 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
 
+// Map amenity keys → boolean DB columns
+const AMENITY_BOOL: Record<string, string> = {
+  pool:            'has_pool',
+  gym:             'has_gym',
+  tennis:          'has_tennis_court',
+  basketball:      'has_basketball_court',
+  kid_play:        'has_kid_playground',
+  kindergarten:    'has_kindergarten',
+  school_primary:  'has_school_primary',
+  school_secondary:'has_school_secondary',
+  school_intl:     'has_school_international',
+  mall_internal:   'has_mall_internal',
+  supermarket:     'has_supermarket_internal',
+  cafe:            'has_cafe_restaurant',
+  bbq:             'has_bbq_area',
+  clubhouse:       'has_clubhouse',
+  library:         'has_library',
+  park:            'has_park_garden',
+  security_24h:    'has_24h_security',
+  smart_home:      'has_smart_home',
+  ev_charging:     'has_ev_charging',
+}
+
+// Map nearby amenity keys → { distance column, max meters }
+const AMENITY_NEARBY: Record<string, { col: string; maxM: number }> = {
+  nearby_metro:        { col: 'nearest_metro_m',                 maxM: 800 },
+  nearby_intl_school:  { col: 'nearest_international_school_m',  maxM: 800 },
+  nearby_hospital:     { col: 'nearest_hospital_m',              maxM: 800 },
+  nearby_mall:         { col: 'nearest_mall_m',                  maxM: 800 },
+  nearby_supermarket:  { col: 'nearest_supermarket_m',           maxM: 800 },
+}
+
+function csv(sp: URLSearchParams, key: string): string[] {
+  const v = sp.get(key)
+  return v ? v.split(',').filter(Boolean) : []
+}
+
 export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams
+
   const swLat = parseFloat(sp.get('swLat') ?? '')
   const swLng = parseFloat(sp.get('swLng') ?? '')
   const neLat = parseFloat(sp.get('neLat') ?? '')
@@ -14,11 +52,39 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'invalid bounds' }, { status: 400 })
   }
 
-  const propertyType = sp.get('property_type') ?? ''
-  const priceMin = parseInt(sp.get('price_min') ?? '0')   // in tỷ VND
-  const priceMax = parseInt(sp.get('price_max') ?? '0')   // in tỷ VND, 0 = no limit
+  const mode = sp.get('mode') ?? 'sale'
+
+  // ── Core params ────────────────────────────────────────
+  const propertyType     = sp.get('property_type') ?? ''
+  const priceMin         = parseInt(sp.get('price_min') ?? '0')
+  const priceMax         = parseInt(sp.get('price_max') ?? '0')
+
+  // ── Multi-select (comma-separated) ────────────────────
+  const tiers            = csv(sp, 'tiers')
+  const statuses         = csv(sp, 'statuses')
+  const redBookStatuses  = csv(sp, 'red_book_statuses')
+  const landOriginTypes  = csv(sp, 'land_origin_types')
+  const ownershipTerms   = csv(sp, 'ownership_terms')
+  const mainDirections   = csv(sp, 'main_directions')
+  const noiseLevels      = csv(sp, 'noise_levels')
+  const amenities        = csv(sp, 'amenities')
+
+  // ── Numeric thresholds ────────────────────────────────
+  const legalScoreMin      = parseInt(sp.get('legal_score_min') ?? '0')
+  const investmentScoreMin = parseInt(sp.get('investment_score_min') ?? '0')
+  const bqlRatingMin       = parseFloat(sp.get('bql_rating_min') ?? '0')
+  const reviewRatingMin    = parseFloat(sp.get('review_rating_min') ?? '0')
+  const yearHandoverMax    = parseInt(sp.get('year_handover_max') ?? '0')
+  const floodRiskMaxRaw    = sp.get('flood_risk_max')
+  const floodRiskMax       = floodRiskMaxRaw !== null ? parseInt(floodRiskMaxRaw) : null
+
+  // ── Rent-mode params ──────────────────────────────────
+  const rentDemandScoreMin = parseInt(sp.get('rent_demand_score_min') ?? '0')
+  const rentTrend          = sp.get('rent_trend') ?? ''
+  const isExpatFriendly    = sp.get('is_expat_friendly') === 'true'
 
   const supabase = await createClient()
+
   let query = supabase
     .from('projects')
     .select(
@@ -33,14 +99,53 @@ export async function GET(req: NextRequest) {
     .not('lat', 'is', null)
     .not('lng', 'is', null)
 
+  // ── Filters ───────────────────────────────────────────
+
   if (propertyType) query = query.eq('property_type', propertyType)
 
-  // price_primary_per_m2_min is in VND/m², convert tỷ to approximate: 1 tỷ/m² threshold isn't right
-  // The price fields are tr/m² (million VND per m²), and 1 tỷ = 1000 tr
-  // price_min/price_max from filter are in tỷ total project price range
-  // For now filter by price_primary_per_m2_min as a proxy (in VND)
-  if (priceMin > 0) query = query.gte('price_primary_per_m2_min', priceMin * 1_000_000)
-  if (priceMax > 0) query = query.lte('price_primary_per_m2_min', priceMax * 1_000_000)
+  if (tiers.length)           query = query.in('tier', tiers)
+  if (statuses.length)        query = query.in('status', statuses)
+  if (redBookStatuses.length) query = query.in('red_book_status', redBookStatuses)
+  if (landOriginTypes.length) query = query.in('land_origin_type', landOriginTypes)
+  if (ownershipTerms.length)  query = query.in('ownership_term', ownershipTerms)
+  if (mainDirections.length)  query = query.in('main_direction', mainDirections)
+  if (noiseLevels.length)     query = query.in('noise_level', noiseLevels)
+
+  // Price — sale: price_primary_per_m2_min in VND/m², filter in tr/m² (×1,000,000)
+  //       — rent: rent_2br_avg_monthly_vnd in VND, filter in tr/month (×1,000,000)
+  if (mode === 'rent_long') {
+    if (priceMin > 0) query = query.gte('rent_2br_avg_monthly_vnd', priceMin * 1_000_000)
+    if (priceMax > 0 && priceMax < 200) query = query.lte('rent_2br_avg_monthly_vnd', priceMax * 1_000_000)
+  } else {
+    if (priceMin > 0) query = query.gte('price_primary_per_m2_min', priceMin * 1_000_000)
+    if (priceMax > 0 && priceMax < 200) query = query.lte('price_primary_per_m2_min', priceMax * 1_000_000)
+  }
+
+  if (legalScoreMin > 0)      query = query.gte('legal_score', legalScoreMin)
+  if (investmentScoreMin > 0) query = query.gte('investment_score', investmentScoreMin)
+  if (bqlRatingMin > 0)       query = query.gte('bql_rating', bqlRatingMin)
+  if (reviewRatingMin > 0)    query = query.gte('review_avg_rating', reviewRatingMin)
+  if (yearHandoverMax > 0)    query = query.lte('year_handover', yearHandoverMax)
+  if (floodRiskMax !== null)  query = query.lte('flood_risk_level', floodRiskMax)
+
+  if (mode === 'rent_long') {
+    if (rentDemandScoreMin > 0) query = query.gte('rent_demand_score', rentDemandScoreMin)
+    if (rentTrend)              query = query.eq('rent_trend', rentTrend)
+    if (isExpatFriendly)        query = query.eq('is_expat_friendly', true)
+  }
+
+  // Amenities
+  for (const amenity of amenities) {
+    const boolCol = AMENITY_BOOL[amenity]
+    if (boolCol) {
+      query = query.eq(boolCol, true)
+      continue
+    }
+    const nearby = AMENITY_NEARBY[amenity]
+    if (nearby) {
+      query = query.lte(nearby.col, nearby.maxM).not(nearby.col, 'is', null)
+    }
+  }
 
   const { data, error } = await query.limit(100)
 
