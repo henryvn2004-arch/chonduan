@@ -119,8 +119,41 @@ export default async function ProjectHubPage({ params, searchParams }: Props) {
   const project = await fetchProject(province, slug)
   if (!project) notFound()
 
+  const schemaOrg = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    name: project.name_official,
+    description: project.description_short ?? undefined,
+    url: `https://chonduan.vn/du-an/${encodeURIComponent(province)}/${slug}`,
+    image: project.banner_url ?? project.logo_url ?? undefined,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: project.district ?? project.province,
+      addressRegion: project.province,
+      addressCountry: 'VN',
+    },
+    ...(project.price_primary_per_m2_min && {
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'VND',
+        price: project.price_primary_per_m2_min,
+      },
+    }),
+    ...(project.developer && {
+      seller: {
+        '@type': 'Organization',
+        name: project.developer.name,
+        url: project.developer.website ?? undefined,
+      },
+    }),
+  }
+
   return (
     <div className="min-h-screen bg-[#F5F7FA] text-[#0D1B3D]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+      />
       {/* Minimal nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-[#E2E8F0] h-14 flex items-center px-4 gap-3">
         <Link href="/" className="shrink-0">
