@@ -12,7 +12,7 @@ const HomeMap = dynamic(() => import('@/components/map/HomeMap'), { ssr: false }
 
 const DEFAULT_FILTERS: FilterState = { property_type: '', price_min: 0, price_max: 100 }
 
-export default function MapPage() {
+export default function MapPage({ mapsApiKey }: { mapsApiKey: string }) {
   const searchParams = useSearchParams()
   const rawMode = searchParams.get('mode')
   const mode: Mode = rawMode === 'rent_long' ? 'rent_long' : 'sale'
@@ -59,6 +59,7 @@ export default function MapPage() {
         {/* Center: Map */}
         <div className="flex-1 relative">
           <HomeMap
+            mapsApiKey={mapsApiKey}
             mode={mode}
             flyTo={flyTo}
             filters={filters}
