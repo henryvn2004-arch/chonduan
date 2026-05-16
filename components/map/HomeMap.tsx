@@ -10,13 +10,14 @@ const DEFAULT_CENTER = { lat: 10.7769, lng: 106.7009 } // HCMC
 const DEFAULT_ZOOM = 12
 
 let mapsInitialized = false
-function initMapsOptions() {
+function initMapsOptions(apiKey: string) {
   if (mapsInitialized) return
   mapsInitialized = true
-  setOptions({ key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '', v: 'weekly' })
+  setOptions({ key: apiKey, v: 'weekly' })
 }
 
 interface Props {
+  mapsApiKey: string
   mode: Mode
   flyTo?: SearchResult | null
   filters: FilterState
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export default function HomeMap({
+  mapsApiKey,
   mode,
   flyTo,
   filters,
@@ -74,7 +76,7 @@ export default function HomeMap({
   useEffect(() => {
     let cancelled = false
     async function init() {
-      initMapsOptions()
+      initMapsOptions(mapsApiKey)
       await importLibrary('maps')
       if (cancelled || !mapDivRef.current) return
 
