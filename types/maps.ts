@@ -1,5 +1,7 @@
 export type Mode = 'sale' | 'rent_long'
 
+export type ProjectStatus = 'sap_mo_ban' | 'dang_mo_ban' | 'dang_xay' | 'da_ban_giao' | 'da_ban_giao_lau'
+
 export interface ProjectPin {
   id: string
   name_official: string
@@ -15,6 +17,14 @@ export interface ProjectPin {
   rent_2br_avg_monthly_vnd: number | null
   description_short: string | null
   property_type: string
+  status: ProjectStatus | null
+  banner_url: string | null
+}
+
+export interface FilterState {
+  property_type: string
+  price_min: number
+  price_max: number
 }
 
 export interface SearchResult {
