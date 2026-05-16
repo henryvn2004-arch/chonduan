@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import AgentContactButton from './AgentContactButton'
 
 interface AgentRow {
   agent_id: string
@@ -39,7 +40,7 @@ const TIER_LABEL: Record<string, string> = {
   unverified: '',
 }
 
-function AgentCard({ agent, type }: { agent: AgentRow; type: 'sale' | 'rent_long' }) {
+function AgentCard({ agent, type, projectId }: { agent: AgentRow; type: 'sale' | 'rent_long'; projectId: string }) {
   const dealCount = type === 'rent_long'
     ? (agent.rental_deals_closed_count ?? 0)
     : (agent.deals_closed_count ?? 0)
@@ -88,16 +89,16 @@ function AgentCard({ agent, type }: { agent: AgentRow; type: 'sale' | 'rent_long
         </div>
       </div>
 
-      <a
-        href={`tel:${agent.phone.replace(/\s/g, '')}`}
+      <AgentContactButton
+        agent={{ id: agent.agent_id, display_name: agent.display_name, phone: agent.phone }}
+        projectId={projectId}
+        mode={type}
         className={`shrink-0 self-center px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
           type === 'sale'
             ? 'bg-[#1565FF] text-white hover:bg-[#0D4FCC]'
             : 'bg-[#0D1B3D] text-white hover:bg-[#1a2f5e]'
         }`}
-      >
-        Liên hệ
-      </a>
+      />
     </div>
   )
 }
@@ -107,7 +108,7 @@ function EmptyState({ label }: { label: string }) {
     <div className="bg-[#F8FAFC] rounded-xl border border-dashed border-[#E2E8F0] p-5 text-center">
       <p className="text-sm text-[#94A3B8]">Chưa có môi giới {label} cho dự án này.</p>
       <Link
-        href="/dang-ky-moi-gioi"
+        href="/dang-ky/moi-gioi"
         className="inline-block mt-2 text-xs text-[#1565FF] font-medium hover:underline"
       >
         Đăng ký trở thành môi giới →
@@ -144,7 +145,7 @@ export default async function AgentsSection({
           </div>
           {saleAgents.length > 0 ? (
             <div className="space-y-2">
-              {saleAgents.map(a => <AgentCard key={a.agent_id} agent={a} type="sale" />)}
+              {saleAgents.map(a => <AgentCard key={a.agent_id} agent={a} type="sale" projectId={projectId} />)}
             </div>
           ) : (
             <EmptyState label="mua/bán" />
@@ -161,7 +162,7 @@ export default async function AgentsSection({
           </div>
           {rentAgents.length > 0 ? (
             <div className="space-y-2">
-              {rentAgents.map(a => <AgentCard key={a.agent_id} agent={a} type="rent_long" />)}
+              {rentAgents.map(a => <AgentCard key={a.agent_id} agent={a} type="rent_long" projectId={projectId} />)}
             </div>
           ) : (
             <EmptyState label="cho thuê" />
@@ -170,7 +171,7 @@ export default async function AgentsSection({
 
         <p className="text-xs text-[#94A3B8] text-center">
           Danh sách môi giới được cập nhật theo hệ thống đấu thầu slot.{' '}
-          <Link href="/dang-ky-moi-gioi" className="text-[#1565FF] hover:underline">
+          <Link href="/dang-ky/moi-gioi" className="text-[#1565FF] hover:underline">
             Đăng ký ngay →
           </Link>
         </p>
