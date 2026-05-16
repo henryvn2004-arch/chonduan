@@ -83,7 +83,8 @@ export default function FilterSidebar({ filters, onChange, count }: Props) {
         <div>
           <label className="flex items-center gap-1.5 text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-2">
             <svg className="w-3.5 h-3.5 text-[#1565FF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             Khu vực
           </label>

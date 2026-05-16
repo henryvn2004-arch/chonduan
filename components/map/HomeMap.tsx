@@ -239,22 +239,46 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
         </div>
       )}
 
-      <button
-        onClick={geolocate}
-        disabled={locating}
-        className="absolute bottom-6 right-3 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-[#F1F5F9] transition-colors border border-[#E2E8F0] disabled:opacity-50"
-        title="Vị trí của tôi"
-      >
-        {locating ? (
-          <div className="w-4 h-4 border-2 border-[#1565FF] border-t-transparent rounded-full animate-spin" />
-        ) : (
-          <svg className="w-5 h-5 text-[#1565FF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <circle cx="12" cy="12" r="3" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v3m0 14v3M2 12h3m14 0h3" />
-          </svg>
-        )}
-      </button>
+      {/* Right controls: geolocate + zoom */}
+      <div className="absolute bottom-6 right-3 z-10 flex flex-col items-center gap-2">
+        <button
+          onClick={geolocate}
+          disabled={locating}
+          className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-[#F1F5F9] transition-colors border border-[#E2E8F0] disabled:opacity-50"
+          title="Vị trí của tôi"
+        >
+          {locating ? (
+            <div className="w-4 h-4 border-2 border-[#1565FF] border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <svg className="w-5 h-5 text-[#1565FF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 16v2M2 12h2m16 0h2" />
+            </svg>
+          )}
+        </button>
+        <div className="flex flex-col bg-white rounded-lg shadow-md border border-[#E2E8F0] overflow-hidden">
+          <button
+            onClick={() => mapRef.current?.zoomIn()}
+            className="w-10 h-10 flex items-center justify-center hover:bg-[#F1F5F9] transition-colors border-b border-[#E2E8F0] text-[#0D1B3D]"
+            title="Phóng to"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16M4 12h16" />
+            </svg>
+          </button>
+          <button
+            onClick={() => mapRef.current?.zoomOut()}
+            className="w-10 h-10 flex items-center justify-center hover:bg-[#F1F5F9] transition-colors text-[#0D1B3D]"
+            title="Thu nhỏ"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 12h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
 
+      {/* Layers button — bottom left */}
       <button
         onClick={() => {
           const map = mapRef.current
@@ -264,12 +288,13 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
           map.setLayoutProperty('osm', 'visibility', next ? 'none' : 'visible')
           setSatellite(next)
         }}
-        className={`absolute bottom-20 left-3 z-10 w-10 h-10 rounded-full shadow-md flex items-center justify-center transition-colors border ${satellite ? 'bg-[#1565FF] border-[#1565FF]' : 'bg-white border-[#E2E8F0] hover:bg-[#F1F5F9]'}`}
+        className={`absolute bottom-6 left-3 z-10 flex flex-col items-center gap-0.5 px-2.5 py-2 rounded-xl shadow-md border transition-colors ${satellite ? 'bg-[#1565FF] border-[#1565FF]' : 'bg-white border-[#E2E8F0] hover:bg-[#F1F5F9]'}`}
         title={satellite ? 'Bản đồ' : 'Vệ tinh'}
       >
         <svg className={`w-5 h-5 ${satellite ? 'text-white' : 'text-[#64748B]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 9m0 8V9m0 0L9 7" />
         </svg>
+        <span className={`text-[10px] font-medium ${satellite ? 'text-white' : 'text-[#64748B]'}`}>Layers</span>
       </button>
     </div>
   )
