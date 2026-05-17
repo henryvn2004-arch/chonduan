@@ -110,7 +110,9 @@ export default async function TopupPage({
                       {tx.type === 'topup' ? '↑ Nạp tiền' :
                        tx.type === 'lead_charge' ? '↓ Lead charge' :
                        tx.type === 'bid_charge' ? '↓ Bid tuần' :
-                       tx.type === 'refund' ? '↑ Hoàn tiền' : tx.type}
+                       tx.type === 'refund' ? '↑ Hoàn tiền' :
+                       tx.type === 'feature_charge' ? '↓ Featured video' :
+                       tx.type === 'boost_charge' ? '↓ Boost bài viết' : tx.type}
                     </div>
                     {tx.notes && <div className="text-xs text-[#94A3B8]">{tx.notes}</div>}
                   </div>

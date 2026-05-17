@@ -39,7 +39,8 @@
       "Bash(gh run *)",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('test:', d.get\\('scripts',{}\\).get\\('test'\\)\\); print\\('dev:', d.get\\('scripts',{}\\).get\\('dev'\\)\\)\")",
       "Bash(node -e \"const d=require\\('./package.json'\\); console.log\\('test:',d.scripts.test\\); console.log\\('dev:',d.scripts.dev\\)\")",
-      "Bash(node -e \"const d=require\\('./package.json'\\); const keys=Object.keys\\({...d.dependencies,...d.devDependencies}\\); console.log\\(keys.filter\\(k=>k.includes\\('playwright'\\)\\).join\\('\\\\n'\\)\\)\")"
+      "Bash(node -e \"const d=require\\('./package.json'\\); const keys=Object.keys\\({...d.dependencies,...d.devDependencies}\\); console.log\\(keys.filter\\(k=>k.includes\\('playwright'\\)\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

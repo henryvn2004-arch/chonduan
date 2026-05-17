@@ -8,6 +8,7 @@ interface AgentRow {
   display_name: string
   avatar_url: string | null
   tier: string | null
+  verified_badge_active: boolean | null
   phone: string
   avg_rating: number | null
   deals_closed_count: number | null
@@ -15,15 +16,72 @@ interface AgentRow {
   years_experience: number | null
   bid_amount: number
   slot_rank: number | null
+  featured_video_url?: string | null
+  featured_video_type?: string | null
+}
+
+function getYouTubeId(url: string): string | null {
+  const m = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+
+function VideoEmbed({ url, type }: { url: string; type: string }) {
+  if (type === 'youtube') {
+    const id = getYouTubeId(url)
+    if (!id) return null
+    return (
+      <div className="mt-3 rounded-lg overflow-hidden aspect-video">
+        <iframe
+          src={`https://www.youtube.com/embed/${id}`}
+          className="w-full h-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+          title="Featured video"
+        />
+      </div>
+    )
+  }
+  if (type === 'tiktok') {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 flex items-center gap-2 text-xs text-[#1565FF] font-medium hover:underline"
+      >
+        🎵 Xem video TikTok giới thiệu →
+      </a>
+    )
+  }
+  return null
 }
 
 async function fetchTopAgents(projectId: string, slotType: 'sale' | 'rent_long'): Promise<AgentRow[]> {
   const supabase = await createClient()
-  const { data } = await supabase.rpc('get_top_agents', {
+  const { data: agents } = await supabase.rpc('get_top_agents', {
     p_project_id: projectId,
     p_slot_type: slotType,
   })
-  return (data ?? []) as AgentRow[]
+  if (!agents?.length) return []
+
+  // Fetch featured videos for these agents on this project
+  const agentIds = agents.map((a: AgentRow) => a.agent_id)
+  const { data: videos } = await supabase
+    .from('featured_videos')
+    .select('agent_id, video_url, video_type')
+    .eq('project_id', projectId)
+    .eq('active', true)
+    .gt('expires_at', new Date().toISOString())
+    .in('agent_id', agentIds)
+
+  const videoMap = Object.fromEntries((videos ?? []).map(v => [v.agent_id, v]))
+
+  return agents.map((a: AgentRow) => ({
+    ...a,
+    featured_video_url: videoMap[a.agent_id]?.video_url ?? null,
+    featured_video_type: videoMap[a.agent_id]?.video_type ?? null,
+  }))
 }
 
 const TIER_BADGE: Record<string, string> = {
@@ -48,7 +106,8 @@ function AgentCard({ agent, type, projectId }: { agent: AgentRow; type: 'sale' |
   const tierLabel = agent.tier ? TIER_LABEL[agent.tier] : null
 
   return (
-    <div className="bg-white rounded-xl border border-[#E2E8F0] p-4 flex gap-3">
+    <div className="bg-white rounded-xl border border-[#E2E8F0] p-4">
+    <div className="flex gap-3">
       <Link href={`/moi-gioi/${agent.slug}`} className="shrink-0">
         {agent.avatar_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -69,9 +128,17 @@ function AgentCard({ agent, type, projectId }: { agent: AgentRow; type: 'sale' |
           <Link href={`/moi-gioi/${agent.slug}`} className="font-semibold text-[#0D1B3D] text-sm hover:text-[#1565FF] transition-colors">
             {agent.display_name}
           </Link>
+          {agent.verified_badge_active && (
+            <span className="text-[10px] font-semibold text-[#1565FF]">✅</span>
+          )}
           {tierBadge && tierLabel && (
             <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-md ${tierBadge}`}>
               {tierLabel}
+            </span>
+          )}
+          {agent.featured_video_url && (
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-red-50 text-red-600">
+              ▶ Video
             </span>
           )}
         </div>
@@ -100,6 +167,10 @@ function AgentCard({ agent, type, projectId }: { agent: AgentRow; type: 'sale' |
         }`}
       />
     </div>
+    {agent.featured_video_url && agent.featured_video_type && (
+      <VideoEmbed url={agent.featured_video_url} type={agent.featured_video_type} />
+    )}
+  </div>
   )
 }
 
