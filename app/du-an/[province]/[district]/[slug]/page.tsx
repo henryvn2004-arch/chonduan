@@ -77,7 +77,14 @@ async function fetchProject(slug: string): Promise<Record<string, any> | null> {
     .eq('published', true)
     .single()
 
-  if (error || !data) return null
+  if (error) {
+    console.error('[fetchProject] supabase error:', JSON.stringify(error))
+    return null
+  }
+  if (!data) {
+    console.error('[fetchProject] no data for slug:', slug)
+    return null
+  }
   return data as Record<string, any>
 }
 
