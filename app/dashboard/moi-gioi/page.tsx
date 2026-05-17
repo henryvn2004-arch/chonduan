@@ -25,9 +25,8 @@ const LEAD_STATUS_COLOR: Record<string, string> = {
   lost: 'bg-red-50 text-red-600',
 }
 
-function fmtVnd(n: number) {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}tr`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`
+function fmtCr(n: number) {
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}k`
   return `${n}`
 }
 
@@ -60,14 +59,14 @@ export default async function AgentDashboardPage() {
   ] = await Promise.all([
     supabase
       .from('wallets')
-      .select('balance_vnd, total_topped_up_vnd, total_spent_vnd')
+      .select('balance_credits, total_topped_up_credits, total_spent_credits')
       .eq('owner_type', 'agent')
       .eq('owner_id', agent.id)
       .single(),
 
     supabase
       .from('agent_bids')
-      .select('id, slot_type, bid_amount_weekly_vnd, slot_rank, status, ends_at, projects(id, name_official, slug, province)')
+      .select('id, slot_type, bid_amount_weekly_credits, slot_rank, status, ends_at, projects(id, name_official, slug, province)')
       .eq('agent_id', agent.id)
       .eq('status', 'active')
       .order('slot_rank', { ascending: true, nullsFirst: false }),
@@ -80,7 +79,7 @@ export default async function AgentDashboardPage() {
       .limit(20),
   ])
 
-  const balance = Number(wallet?.balance_vnd ?? 0)
+  const balance = Number(wallet?.balance_credits ?? 0)
   const newLeads = (leads ?? []).filter(l => l.status === 'new').length
 
   return (
@@ -113,8 +112,8 @@ export default async function AgentDashboardPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="bg-white rounded-xl border border-[#E2E8F0] p-4">
             <div className="text-xs text-[#64748B] mb-1">Ví</div>
-            <div className="text-xl font-bold text-[#0D1B3D]">{fmtVnd(balance)}</div>
-            <div className="text-[10px] text-[#94A3B8]">VND</div>
+            <div className="text-xl font-bold text-[#0D1B3D]">{fmtCr(balance)}</div>
+            <div className="text-[10px] text-[#94A3B8]">credits</div>
           </div>
           <div className="bg-white rounded-xl border border-[#E2E8F0] p-4">
             <div className="text-xs text-[#64748B] mb-1">Lead mới</div>
@@ -216,7 +215,7 @@ export default async function AgentDashboardPage() {
                           <span className={`text-xs font-bold ${rankColor}`}>
                             {bid.slot_rank ? `#${bid.slot_rank}` : 'Ngoài top'}
                           </span>
-                          <span className="text-xs text-[#64748B]">{fmtVnd(bid.bid_amount_weekly_vnd)}/tuần</span>
+                          <span className="text-xs text-[#64748B]">{fmtCr(bid.bid_amount_weekly_credits)}/tuần</span>
                         </div>
                       </div>
                     )
@@ -230,11 +229,11 @@ export default async function AgentDashboardPage() {
               <h2 className="font-semibold text-[#0D1B3D] mb-3">Ví của tôi</h2>
               <div className="bg-white rounded-xl border border-[#E2E8F0] p-4">
                 <div className="text-2xl font-bold text-[#0D1B3D]">
-                  {balance.toLocaleString('vi-VN')} <span className="text-sm font-normal text-[#64748B]">VND</span>
+                  {balance.toLocaleString('vi-VN')} <span className="text-sm font-normal text-[#64748B]">Cr</span>
                 </div>
                 <div className="flex gap-4 mt-2 text-[10px] text-[#94A3B8]">
-                  <span>Đã nạp: {fmtVnd(wallet?.total_topped_up_vnd ?? 0)}</span>
-                  <span>Đã chi: {fmtVnd(wallet?.total_spent_vnd ?? 0)}</span>
+                  <span>Đã nạp: {fmtCr(wallet?.total_topped_up_credits ?? 0)}</span>
+                  <span>Đã chi: {fmtCr(wallet?.total_spent_credits ?? 0)}</span>
                 </div>
                 <button
                   disabled

@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/khao-luan",
       "schedule": "0 1,9,17 * * *"
+    },
+    {
+      "path": "/api/cron/resolve-bids",
+      "schedule": "0 * * * *"
     }
   ]
 }
