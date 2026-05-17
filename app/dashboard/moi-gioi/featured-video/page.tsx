@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Play } from 'lucide-react'
 import FeaturedVideoForm from './FeaturedVideoForm'
 
-export const metadata = { title: 'Featured Video — ChonDuAn' }
+export const metadata = { title: 'Featured Video — PhaplyDuan' }
 
 export default async function FeaturedVideoPage() {
   const supabase = await createClient()

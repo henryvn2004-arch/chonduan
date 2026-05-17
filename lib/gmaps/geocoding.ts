@@ -2,7 +2,7 @@ import { createHash } from 'crypto'
 import { getGeocodeCache, setGeocodeCache } from './cache'
 
 const NOMINATIM = 'https://nominatim.openstreetmap.org'
-const UA = 'ChonDuAn/1.0 (chonduan.vn)'
+const UA = 'ChonDuAn/1.0 (phaplyduan.vn)'
 
 export interface GeocodeResult {
   lat: number

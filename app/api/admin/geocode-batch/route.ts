@@ -5,7 +5,7 @@ export const runtime = 'nodejs'
 export const maxDuration = 300
 
 const NOMINATIM = 'https://nominatim.openstreetmap.org/search'
-const UA = 'chonduan-scraper/1.0 (Vietnam real estate; henry@chonduan.vn)'
+const UA = 'chonduan-scraper/1.0 (Vietnam real estate; henry@phaplyduan.vn)'
 
 async function nominatim(query: string): Promise<{ lat: number; lng: number } | null> {
   const url = `${NOMINATIM}?q=${encodeURIComponent(query)}&format=jsonv2&limit=1&countrycodes=vn`

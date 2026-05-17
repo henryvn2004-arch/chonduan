@@ -35,7 +35,7 @@ function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
 
-export const metadata = { title: 'Dashboard Môi giới — ChonDuAn' }
+export const metadata = { title: 'Dashboard Môi giới — PhaplyDuan' }
 
 export default async function AgentDashboardPage() {
   const supabase = await createClient()

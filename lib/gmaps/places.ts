@@ -1,7 +1,7 @@
 import { getPlaceCache, setPlaceCache, PlaceRow } from './cache'
 
 const NOMINATIM = 'https://nominatim.openstreetmap.org'
-const UA = 'ChonDuAn/1.0 (chonduan.vn)'
+const UA = 'ChonDuAn/1.0 (phaplyduan.vn)'
 
 export type PlaceResult = PlaceRow
 

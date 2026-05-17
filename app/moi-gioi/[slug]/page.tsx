@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data } = await supabase.from('agents').select('display_name, bio').eq('slug', slug).single()
   if (!data) return { title: 'Môi giới' }
   return {
-    title: `${data.display_name} — Môi giới BĐS | ChonDuAn`,
+    title: `${data.display_name} — Môi giới BĐS | PhaplyDuan`,
     description: data.bio ?? undefined,
   }
 }

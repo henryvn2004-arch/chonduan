@@ -19,8 +19,8 @@ export default function Nav({ mode, onSearchSelect, onGeolocate }: Props) {
       <div className="flex items-center gap-3 px-4 h-14">
         {/* Logo */}
         <Link href="/" className="shrink-0 flex items-center gap-2 mr-1">
-          <Image src="/logo.png" alt="ChonDuAn" width={140} height={40} className="h-9 w-auto hidden sm:block" priority />
-          <Image src="/favicon.png" alt="ChonDuAn" width={36} height={36} className="h-9 w-auto sm:hidden" priority />
+          <Image src="/logo.png" alt="PhaplyDuan" width={140} height={40} className="h-9 w-auto hidden sm:block" priority />
+          <Image src="/favicon.png" alt="PhaplyDuan" width={36} height={36} className="h-9 w-auto sm:hidden" priority />
         </Link>
 
         {/* Search */}

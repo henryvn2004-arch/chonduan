@@ -38,7 +38,7 @@ export default function DangNhapPage() {
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-8 space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-[#0D1B3D]">Đăng nhập</h1>
-          <p className="text-sm text-[#8A94A6] mt-1">Admin — Chọn Dự Án</p>
+          <p className="text-sm text-[#8A94A6] mt-1">Admin — Pháp Lý Dự Án</p>
         </div>
 
         <form onSubmit={handleEmailLogin} className="space-y-4">

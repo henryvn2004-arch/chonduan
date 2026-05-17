@@ -1,7 +1,7 @@
 import { getNearbyCache, setNearbyCache } from './cache'
 
 const OVERPASS = 'https://overpass-api.de/api/interpreter'
-const UA = 'ChonDuAn/1.0 (chonduan.vn)'
+const UA = 'ChonDuAn/1.0 (phaplyduan.vn)'
 
 export interface NearbyPlace {
   placeId: string   // "osm:node/12345"

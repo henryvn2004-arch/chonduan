@@ -169,7 +169,7 @@ export default function SignupClient() {
     <div className="w-full max-w-lg">
       {/* Header */}
       <div className="text-center mb-8">
-        <Link href="/" className="text-xl font-bold text-[#1565FF]">ChonDuAn</Link>
+        <Link href="/" className="text-xl font-bold text-[#1565FF]">PhaplyDuan</Link>
         <h1 className="text-2xl font-bold text-[#0D1B3D] mt-3">Đăng ký môi giới</h1>
         <p className="text-sm text-[#64748B] mt-1">Kết nối với hàng nghìn người mua và thuê</p>
       </div>

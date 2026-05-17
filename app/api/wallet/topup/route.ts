@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   if (!pkg) return NextResponse.json({ error: 'Package not found' }, { status: 404 })
 
   const totalCredits = pkg.credits + pkg.bonus_credits
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://chonduan.vn'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://phaplyduan.vn'
 
   // Create pending payment record first
   const { data: payment, error: payErr } = await supabase

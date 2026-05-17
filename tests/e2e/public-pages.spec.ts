@@ -4,7 +4,7 @@ test.describe('Public pages', () => {
 
   test('homepage loads with map', async ({ page }) => {
     await page.goto('/')
-    await expect(page).toHaveTitle(/ChonDuAn/)
+    await expect(page).toHaveTitle(/PhaplyDuan/)
     // Mode toggle buttons visible
     await expect(page.getByText('Mua / Bán')).toBeVisible()
     // Use first() — "Cho thuê" appears in mode toggle + filter sidebar

@@ -40,7 +40,15 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('test:', d.get\\('scripts',{}\\).get\\('test'\\)\\); print\\('dev:', d.get\\('scripts',{}\\).get\\('dev'\\)\\)\")",
       "Bash(node -e \"const d=require\\('./package.json'\\); console.log\\('test:',d.scripts.test\\); console.log\\('dev:',d.scripts.dev\\)\")",
       "Bash(node -e \"const d=require\\('./package.json'\\); const keys=Object.keys\\({...d.dependencies,...d.devDependencies}\\); console.log\\(keys.filter\\(k=>k.includes\\('playwright'\\)\\).join\\('\\\\n'\\)\\)\")",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\awesome-murdock-56c761\" -Directory)",
+      "WebFetch(domain:www.zillow.com)",
+      "Bash(Get-Content package.json)",
+      "Bash(Select-String -Pattern \"lucide|dependencies\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)\\)\")",
+      "Bash(sed -i 's|ChonDuAn/1\\\\.0 \\(chonduan\\\\.vn\\)|PhaplyDuan/1.0 \\(phaplyduan.vn\\)|g' lib/gmaps/geocoding.ts lib/gmaps/nearby.ts lib/gmaps/places.ts)",
+      "Bash(sed -i 's|chonduan-scraper/1\\\\.0 \\(Vietnam real estate; henry@chonduan\\\\.vn\\)|phaplyduan-scraper/1.0 \\(Vietnam real estate; henry@phaplyduan.vn\\)|g' app/api/admin/geocode-batch/route.ts)",
+      "Bash(sed -i 's|\"chonduan-tmp\"|\"phaplyduan\"|g' package.json)"
     ]
   }
 }

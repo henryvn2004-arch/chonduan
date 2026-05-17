@@ -5,7 +5,7 @@ import { BadgeCheck, Circle, Sparkles, Clock, Check } from 'lucide-react'
 import SubscribeButton from './SubscribeButton'
 import CancelButton from './CancelButton'
 
-export const metadata = { title: 'Verified Badge — ChonDuAn' }
+export const metadata = { title: 'Verified Badge — PhaplyDuan' }
 
 const STATUS_LABEL: Record<string, string> = {
   ACTIVE: 'Đang hoạt động',

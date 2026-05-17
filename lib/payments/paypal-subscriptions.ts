@@ -88,7 +88,7 @@ export async function createSubscription(params: {
       plan_id: params.planId,
       custom_id: params.customId,
       application_context: {
-        brand_name: 'ChonDuAn',
+        brand_name: 'PhaplyDuan',
         locale: 'vi-VN',
         shipping_preference: 'NO_SHIPPING',
         user_action: 'SUBSCRIBE_NOW',
