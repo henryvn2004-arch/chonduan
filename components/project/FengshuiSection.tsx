@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { CheckCircle, XCircle, Info, Compass } from 'lucide-react'
 import type { ProjectDetail } from '@/types/project'
 
 const CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý']
@@ -51,7 +52,7 @@ export default function FengshuiSection({ project }: { project: ProjectDetail })
         {/* Direction */}
         {project.main_direction && (
           <div className="flex items-center gap-3 p-3 bg-[#F8FAFC] rounded-xl">
-            <span className="text-2xl">🧭</span>
+            <Compass className="w-6 h-6 text-[#1565FF]" strokeWidth={1.75} />
             <div>
               <div className="text-xs text-[#64748B]">Hướng chính tòa nhà</div>
               <div className="font-semibold text-[#0D1B3D]">
@@ -122,9 +123,9 @@ export default function FengshuiSection({ project }: { project: ProjectDetail })
               result === 'khong_hop' ? 'bg-red-50 text-red-600' :
               'bg-gray-50 text-gray-600'
             }`}>
-              {result === 'hop' && `✅ Tuổi ${userCanChi} hợp phong thủy với dự án này`}
-              {result === 'khong_hop' && `⚠️ Tuổi ${userCanChi} không hợp phong thủy với dự án này`}
-              {result === 'trung_tinh' && `ℹ️ Tuổi ${userCanChi} — Trung tính, không có thông tin cụ thể cho dự án này`}
+              {result === 'hop' && <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 shrink-0" strokeWidth={2} /> Tuổi {userCanChi} hợp phong thủy với dự án này</span>}
+              {result === 'khong_hop' && <span className="flex items-center gap-1.5"><XCircle className="w-4 h-4 shrink-0" strokeWidth={2} /> Tuổi {userCanChi} không hợp phong thủy với dự án này</span>}
+              {result === 'trung_tinh' && <span className="flex items-center gap-1.5"><Info className="w-4 h-4 shrink-0" strokeWidth={2} /> Tuổi {userCanChi} — Trung tính, không có thông tin cụ thể cho dự án này</span>}
             </div>
           )}
         </div>

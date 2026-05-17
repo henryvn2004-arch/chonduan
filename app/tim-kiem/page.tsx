@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Search } from 'lucide-react'
 import { searchProjects } from '@/lib/search'
 import SearchClient from './SearchClient'
 import Nav from '@/components/nav/Nav'
@@ -188,7 +189,7 @@ export default async function TimKiemPage({
             {/* Results grid */}
             {results.length === 0 ? (
               <div className="text-center py-20">
-                <div className="text-5xl mb-4">🔍</div>
+                <Search className="w-12 h-12 text-[#CBD5E1] mx-auto mb-4" strokeWidth={1.5} />
                 <p className="text-[#0D1B3D] font-semibold mb-2">Không tìm thấy dự án phù hợp</p>
                 <p className="text-sm text-[#94A3B8]">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
                 <Link href="/tim-kiem" className="mt-4 inline-block text-sm text-[#1565FF] hover:underline">

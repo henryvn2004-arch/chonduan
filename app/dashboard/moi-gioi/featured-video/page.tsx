@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Play } from 'lucide-react'
 import FeaturedVideoForm from './FeaturedVideoForm'
 
 export const metadata = { title: 'Featured Video — ChonDuAn' }
@@ -56,7 +57,9 @@ export default async function FeaturedVideoPage() {
         <Link href="/dashboard/moi-gioi" className="text-xs text-[#64748B] hover:text-[#1565FF] mb-1 block">
           ← Dashboard
         </Link>
-        <h1 className="text-lg font-bold text-[#0D1B3D]">Featured Video ▶</h1>
+        <h1 className="flex items-center gap-2 text-lg font-bold text-[#0D1B3D]">
+          <Play className="w-5 h-5 text-[#1565FF]" strokeWidth={2} /> Featured Video
+        </h1>
         <p className="text-xs text-[#64748B] mt-0.5">Video YouTube/TikTok hiển thị trong card môi giới trên trang dự án</p>
       </header>
 
@@ -65,7 +68,7 @@ export default async function FeaturedVideoPage() {
           <p className="font-medium mb-1">Cách hoạt động</p>
           <ul className="text-xs space-y-1 text-blue-600">
             <li>• Video xuất hiện ngay trong card của bạn trên trang dự án</li>
-            <li>• YouTube: nhúng trực tiếp (iframe) · TikTok: link có nhãn ▶</li>
+            <li>• YouTube: nhúng trực tiếp (iframe) · TikTok: link có nhãn video</li>
             <li>• Chỉ áp dụng cho dự án bạn đang bid slot</li>
             <li>• Giá: 250 Cr/tháng ≈ $10 · Hết hạn không tự gia hạn</li>
           </ul>

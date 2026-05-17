@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Landmark, CreditCard } from 'lucide-react'
 
 interface Package {
   id: string
@@ -87,7 +88,7 @@ export default function TopupForm({ packages }: { packages: Package[] }) {
                 : 'border-[#E2E8F0] text-[#64748B] hover:border-[#93C5FD]'
             }`}
           >
-            🏦 payOS (Banking / QR)
+            <Landmark className="w-4 h-4 inline mr-1.5" strokeWidth={2} />payOS (Banking / QR)
           </button>
           <button
             onClick={() => setMethod('paypal')}
@@ -97,7 +98,7 @@ export default function TopupForm({ packages }: { packages: Package[] }) {
                 : 'border-[#E2E8F0] text-[#64748B] hover:border-[#93C5FD]'
             }`}
           >
-            💳 PayPal
+            <CreditCard className="w-4 h-4 inline mr-1.5" strokeWidth={2} />PayPal
           </button>
         </div>
       </div>

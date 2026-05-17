@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Zap } from 'lucide-react'
 
 interface Project {
   id: string
@@ -118,7 +119,7 @@ export default function ArticleEditor({
           />
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-[#0D1B3D]">🚀 Boost bài viết — {BOOST_COST} Cr</span>
+              <span className="flex items-center gap-1.5 text-sm font-semibold text-[#0D1B3D]"><Zap className="w-4 h-4 text-[#1565FF]" strokeWidth={2} /> Boost bài viết — {BOOST_COST} Cr</span>
               {!canBoost && (
                 <span className="text-[10px] text-red-500 font-medium">Không đủ credits</span>
               )}

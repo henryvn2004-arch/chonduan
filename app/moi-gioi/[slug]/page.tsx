@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import type { Metadata } from 'next'
+import { Globe, Languages } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import Nav from '@/components/nav/Nav'
 import AgentProfileClient from './AgentProfileClient'
@@ -21,9 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const SPECIALTY_LABEL: Record<string, string> = {
-  sale: '🏠 Mua/Bán',
-  rent_long: '🔑 Cho thuê dài hạn',
-  rent_short: '🏨 Cho thuê ngắn hạn',
+  sale: 'Mua/Bán',
+  rent_long: 'Cho thuê dài hạn',
+  rent_short: 'Cho thuê ngắn hạn',
 }
 
 export default async function AgentProfilePage({ params }: Props) {
@@ -81,8 +82,8 @@ export default async function AgentProfilePage({ params }: Props) {
                 {(agent.specialty_types ?? []).map((s: string) => (
                   <span key={s} className="px-2 py-0.5 bg-[#F1F5F9] text-[#0D1B3D] text-xs rounded-full">{SPECIALTY_LABEL[s] ?? s}</span>
                 ))}
-                {agent.serves_expat && <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded-full">🌍 Expat</span>}
-                {agent.english_fluent && <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded-full">🇬🇧 English</span>}
+                {agent.serves_expat && <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded-full"><Globe className="w-3 h-3" strokeWidth={2} /> Expat</span>}
+                {agent.english_fluent && <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded-full"><Languages className="w-3 h-3" strokeWidth={2} /> English</span>}
               </div>
             </div>
           </div>

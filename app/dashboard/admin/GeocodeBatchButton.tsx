@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { MapPin } from 'lucide-react'
 
 export default function GeocodeBatchButton() {
   const [status, setStatus] = useState<string | null>(null)
@@ -33,7 +34,7 @@ export default function GeocodeBatchButton() {
         disabled={running}
         className="text-xs px-3 py-1.5 rounded-lg bg-[#1565FF] text-white font-medium hover:bg-[#3D8BFF] disabled:opacity-50 transition"
       >
-        {running ? 'Đang chạy...' : '📍 Geocode batch (50)'}
+        {running ? 'Đang chạy...' : <><MapPin className="w-3 h-3 inline mr-1" strokeWidth={2} />Geocode batch (50)</>}
       </button>
       {status && <span className="text-xs text-[#64748B]">{status}</span>}
     </div>

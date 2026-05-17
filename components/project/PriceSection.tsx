@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Home, Key } from 'lucide-react'
 import type { ProjectDetail } from '@/types/project'
 import SparkLine from './SparkLine'
 
@@ -38,18 +39,20 @@ export default function PriceSection({ project, initialMode }: Props) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-[#0D1B3D]">Giá</h2>
         {/* Toggle */}
-        <div className="flex rounded-lg border border-[#E2E8F0] overflow-hidden text-sm">
+        <div className="flex rounded-full border border-[#E2E8F0] bg-white p-0.5 gap-0.5 text-sm">
           <button
             onClick={() => setMode('sale')}
-            className={`px-3 py-1.5 font-medium transition-colors ${mode === 'sale' ? 'bg-[#1565FF] text-white' : 'text-[#64748B] hover:bg-[#F8FAFC]'}`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium transition-all ${mode === 'sale' ? 'bg-[#1565FF] text-white shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC]'}`}
           >
-            🏠 Mua/Bán
+            <Home className="w-3.5 h-3.5" strokeWidth={2} />
+            Mua/Bán
           </button>
           <button
             onClick={() => setMode('rent_long')}
-            className={`px-3 py-1.5 font-medium transition-colors ${mode === 'rent_long' ? 'bg-[#1565FF] text-white' : 'text-[#64748B] hover:bg-[#F8FAFC]'}`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium transition-all ${mode === 'rent_long' ? 'bg-[#1565FF] text-white shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC]'}`}
           >
-            🔑 Cho thuê
+            <Key className="w-3.5 h-3.5" strokeWidth={2} />
+            Cho thuê
           </button>
         </div>
       </div>
