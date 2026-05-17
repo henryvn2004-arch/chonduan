@@ -3,14 +3,15 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Home, Key, Building2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const STEPS = ['Tài khoản', 'Hồ sơ', 'KYC', 'Chuyên môn', 'Hoàn tất']
 
 const SPECIALTY_OPTIONS = [
-  { value: 'sale', label: '🏠 Mua / Bán' },
-  { value: 'rent_long', label: '🔑 Cho thuê dài hạn' },
-  { value: 'rent_short', label: '🏨 Cho thuê ngắn hạn' },
+  { value: 'sale', label: 'Mua / Bán', Icon: Home },
+  { value: 'rent_long', label: 'Cho thuê dài hạn', Icon: Key },
+  { value: 'rent_short', label: 'Cho thuê ngắn hạn', Icon: Building2 },
 ]
 
 function slugify(name: string) {
@@ -316,6 +317,7 @@ export default function SignupClient() {
                 {SPECIALTY_OPTIONS.map(opt => (
                   <label key={opt.value} className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-colors ${specialties.includes(opt.value) ? 'border-[#1565FF] bg-[#F0F5FF]' : 'border-[#E2E8F0] hover:border-[#1565FF]'}`}>
                     <input type="checkbox" checked={specialties.includes(opt.value)} onChange={() => toggleSpecialty(opt.value)} className="accent-[#1565FF]" />
+                    <opt.Icon className="w-4 h-4 text-[#1565FF] shrink-0" strokeWidth={2} />
                     <span className="text-sm font-medium text-[#0D1B3D]">{opt.label}</span>
                   </label>
                 ))}

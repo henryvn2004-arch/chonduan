@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { Newspaper, Zap } from 'lucide-react'
 
 interface Article {
   id: string
@@ -66,7 +67,7 @@ export default async function NewsSection({
 
       {articles.length === 0 ? (
         <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 text-center">
-          <div className="text-4xl mb-3">📰</div>
+          <Newspaper className="w-10 h-10 text-[#CBD5E1] mx-auto mb-3" strokeWidth={1.5} />
           <div className="text-sm font-medium text-[#0D1B3D] mb-1">
             Tin tức về {projectName}
           </div>
@@ -95,8 +96,8 @@ export default async function NewsSection({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   {a.is_boosted && (
-                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-[#1565FF] shrink-0">
-                      🚀 Nổi bật
+                    <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-[#1565FF] shrink-0">
+                      <Zap className="w-2.5 h-2.5" strokeWidth={2.5} /> Nổi bật
                     </span>
                   )}
                   {a.is_agent_authored && !a.is_boosted && (

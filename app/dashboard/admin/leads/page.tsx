@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Home, Key, Building2 } from 'lucide-react'
 import RefundLeadButton from './RefundLeadButton'
 import FlagLeadButton from './FlagLeadButton'
 
@@ -26,10 +27,16 @@ const STATUS_COLOR: Record<string, string> = {
   flagged: 'bg-orange-50 text-orange-700',
 }
 
+const TYPE_ICON: Record<string, React.ElementType> = {
+  sale: Home,
+  rent_long: Key,
+  rent_short: Building2,
+}
+
 const TYPE_LABEL: Record<string, string> = {
-  sale: '🏠 Sale',
-  rent_long: '🔑 Thuê dài',
-  rent_short: '🏨 Thuê ngắn',
+  sale: 'Sale',
+  rent_long: 'Thuê dài',
+  rent_short: 'Thuê ngắn',
 }
 
 function fmtDate(iso: string) {
@@ -177,7 +184,10 @@ export default async function AdminLeadsPage({
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-xs">{TYPE_LABEL[lead.transaction_type] ?? lead.transaction_type}</span>
+                      <span className="inline-flex items-center gap-1 text-xs">
+                        {(() => { const Icon = TYPE_ICON[lead.transaction_type]; return Icon ? <Icon className="w-3 h-3 text-[#64748B]" strokeWidth={2} /> : null })()}
+                        {TYPE_LABEL[lead.transaction_type] ?? lead.transaction_type}
+                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className="font-medium text-[#0D1B3D]">

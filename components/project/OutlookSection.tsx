@@ -1,4 +1,5 @@
 import type { ProjectDetail } from '@/types/project'
+import { ThumbsUp, AlertTriangle } from 'lucide-react'
 
 function ScoreBar({ score, max = 10 }: { score: number; max?: number }) {
   const pct = (score / max) * 100
@@ -36,7 +37,7 @@ export default function OutlookSection({ project }: { project: ProjectDetail }) 
         {project.ai_pros_cons && (
           <div className="grid sm:grid-cols-2 gap-4 border-t border-[#F1F5F9] pt-4">
             <div>
-              <div className="text-xs font-medium text-green-700 mb-2">✅ Điểm cộng</div>
+              <div className="flex items-center gap-1 text-xs font-medium text-green-700 mb-2"><ThumbsUp className="w-3.5 h-3.5" strokeWidth={2} /> Điểm cộng</div>
               <ul className="space-y-1.5">
                 {project.ai_pros_cons.pros.map((p, i) => (
                   <li key={i} className="text-sm text-[#475569] flex gap-2">
@@ -46,7 +47,7 @@ export default function OutlookSection({ project }: { project: ProjectDetail }) 
               </ul>
             </div>
             <div>
-              <div className="text-xs font-medium text-red-600 mb-2">⚠️ Điểm trừ</div>
+              <div className="flex items-center gap-1 text-xs font-medium text-red-600 mb-2"><AlertTriangle className="w-3.5 h-3.5" strokeWidth={2} /> Điểm trừ</div>
               <ul className="space-y-1.5">
                 {project.ai_pros_cons.cons.map((c, i) => (
                   <li key={i} className="text-sm text-[#475569] flex gap-2">

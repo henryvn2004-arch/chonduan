@@ -2,11 +2,18 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Home, Key, Building2 } from 'lucide-react'
 
 const SLOT_LABEL: Record<string, string> = {
-  sale: '🏠 Mua / Bán',
-  rent_long: '🔑 Cho thuê dài hạn',
-  rent_short: '🏨 Cho thuê ngắn hạn',
+  sale: 'Mua / Bán',
+  rent_long: 'Cho thuê dài hạn',
+  rent_short: 'Cho thuê ngắn hạn',
+}
+
+const SLOT_ICON: Record<string, React.ElementType> = {
+  sale: Home,
+  rent_long: Key,
+  rent_short: Building2,
 }
 
 const FLOOR: Record<string, number> = {
@@ -124,12 +131,13 @@ export default function BidForm({
                 key={s}
                 type="button"
                 onClick={() => { setSlotType(s); setAmount(FLOOR[s] ?? 30) }}
-                className={`text-xs px-3 py-1.5 rounded-lg font-medium border transition-colors ${
+                className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium border transition-colors ${
                   slotType === s
                     ? 'bg-[#1565FF] text-white border-[#1565FF]'
                     : 'bg-white text-[#64748B] border-[#E2E8F0] hover:border-[#1565FF]'
                 }`}
               >
+                {(() => { const Icon = SLOT_ICON[s]; return Icon ? <Icon className="w-3 h-3" strokeWidth={2} /> : null })()}
                 {SLOT_LABEL[s]}
               </button>
             ))}

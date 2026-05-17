@@ -1,26 +1,31 @@
 import type { ProjectDetail } from '@/types/project'
+import {
+  Waves, Dumbbell, Circle, Flame, Sparkles, Thermometer,
+  Laptop, Leaf, Building, ShoppingCart, UtensilsCrossed,
+  Coffee, Cross, Baby, Building2, Zap, Home, BellRing,
+} from 'lucide-react'
 
-const AMENITIES: { key: keyof ProjectDetail; label: string; icon: string }[] = [
-  { key: 'has_pool', label: 'Hồ bơi', icon: '🏊' },
-  { key: 'has_gym', label: 'Gym', icon: '💪' },
-  { key: 'has_tennis_court', label: 'Tennis', icon: '🎾' },
-  { key: 'has_basketball_court', label: 'Bóng rổ', icon: '🏀' },
-  { key: 'has_kids_playground', label: 'Sân trẻ em', icon: '🛝' },
-  { key: 'has_bbq_area', label: 'BBQ', icon: '🔥' },
-  { key: 'has_spa', label: 'Spa', icon: '💆' },
-  { key: 'has_sauna', label: 'Sauna', icon: '🧖' },
-  { key: 'has_coworking', label: 'Co-working', icon: '💻' },
-  { key: 'has_sky_garden', label: 'Sky Garden', icon: '🌿' },
-  { key: 'has_rooftop', label: 'Rooftop', icon: '🏙️' },
-  { key: 'has_supermarket', label: 'Siêu thị', icon: '🛒' },
-  { key: 'has_restaurant', label: 'Nhà hàng', icon: '🍽️' },
-  { key: 'has_cafe', label: 'Cafe', icon: '☕' },
-  { key: 'has_clinic', label: 'Phòng khám', icon: '🏥' },
-  { key: 'has_kindergarten', label: 'Trường mầm non', icon: '👶' },
-  { key: 'has_shopping_mall', label: 'Trung tâm TM', icon: '🏬' },
-  { key: 'has_ev_charging', label: 'Sạc xe điện', icon: '⚡' },
-  { key: 'has_smart_home', label: 'Smart Home', icon: '🏠' },
-  { key: 'has_concierge', label: 'Concierge 24/7', icon: '🛎️' },
+const AMENITIES: { key: keyof ProjectDetail; label: string; Icon: React.ElementType }[] = [
+  { key: 'has_pool', label: 'Hồ bơi', Icon: Waves },
+  { key: 'has_gym', label: 'Gym', Icon: Dumbbell },
+  { key: 'has_tennis_court', label: 'Tennis', Icon: Circle },
+  { key: 'has_basketball_court', label: 'Bóng rổ', Icon: Circle },
+  { key: 'has_kids_playground', label: 'Sân trẻ em', Icon: Baby },
+  { key: 'has_bbq_area', label: 'BBQ', Icon: Flame },
+  { key: 'has_spa', label: 'Spa', Icon: Sparkles },
+  { key: 'has_sauna', label: 'Sauna', Icon: Thermometer },
+  { key: 'has_coworking', label: 'Co-working', Icon: Laptop },
+  { key: 'has_sky_garden', label: 'Sky Garden', Icon: Leaf },
+  { key: 'has_rooftop', label: 'Rooftop', Icon: Building },
+  { key: 'has_supermarket', label: 'Siêu thị', Icon: ShoppingCart },
+  { key: 'has_restaurant', label: 'Nhà hàng', Icon: UtensilsCrossed },
+  { key: 'has_cafe', label: 'Cafe', Icon: Coffee },
+  { key: 'has_clinic', label: 'Phòng khám', Icon: Cross },
+  { key: 'has_kindergarten', label: 'Trường mầm non', Icon: Baby },
+  { key: 'has_shopping_mall', label: 'Trung tâm TM', Icon: Building2 },
+  { key: 'has_ev_charging', label: 'Sạc xe điện', Icon: Zap },
+  { key: 'has_smart_home', label: 'Smart Home', Icon: Home },
+  { key: 'has_concierge', label: 'Concierge 24/7', Icon: BellRing },
 ]
 
 export default function AmenitiesSection({ project }: { project: ProjectDetail }) {
@@ -50,9 +55,9 @@ export default function AmenitiesSection({ project }: { project: ProjectDetail }
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-4">
               {available.map((a) => (
-                <div key={a.key} className="flex flex-col items-center gap-1 p-3 bg-[#F0F6FF] rounded-xl">
-                  <span className="text-2xl">{a.icon}</span>
-                  <span className="text-xs text-[#0D1B3D] text-center font-medium">{a.label}</span>
+                <div key={a.key} className="flex flex-col items-center gap-1.5 p-3 bg-[#F0F6FF] rounded-xl">
+                  <a.Icon className="w-5 h-5 text-[#1565FF]" strokeWidth={1.75} />
+                  <span className="text-xs text-[#0D1B3D] text-center font-medium leading-tight">{a.label}</span>
                 </div>
               ))}
             </div>
@@ -61,13 +66,14 @@ export default function AmenitiesSection({ project }: { project: ProjectDetail }
 
         {unavailable.length > 0 && (
           <>
-            <div className="text-xs font-medium text-[#94A3B8] uppercase tracking-wide mb-3">
-              Không có
+            <div className="text-xs font-medium text-[#64748B] uppercase tracking-wide mb-3">
+              Không có ({unavailable.length})
             </div>
             <div className="flex flex-wrap gap-2">
               {unavailable.map((a) => (
-                <span key={a.key} className="text-xs text-[#94A3B8] bg-[#F8FAFC] px-2 py-1 rounded-lg">
-                  {a.icon} {a.label}
+                <span key={a.key} className="inline-flex items-center gap-1 text-xs text-[#94A3B8] px-2.5 py-1.5 bg-[#F8FAFC] rounded-lg">
+                  <a.Icon className="w-3.5 h-3.5" strokeWidth={1.75} />
+                  {a.label}
                 </span>
               ))}
             </div>

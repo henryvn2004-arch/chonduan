@@ -1,15 +1,22 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Home, Key, Building2 } from 'lucide-react'
 import BidForm from './BidForm'
 import CancelBidButton from './CancelBidButton'
 
 export const metadata = { title: 'Bid Slot — ChonDuAn' }
 
+const SLOT_ICON: Record<string, React.ElementType> = {
+  sale: Home,
+  rent_long: Key,
+  rent_short: Building2,
+}
+
 const SLOT_LABEL: Record<string, string> = {
-  sale: '🏠 Mua / Bán',
-  rent_long: '🔑 Cho thuê dài hạn',
-  rent_short: '🏨 Cho thuê ngắn hạn',
+  sale: 'Mua / Bán',
+  rent_long: 'Cho thuê dài hạn',
+  rent_short: 'Cho thuê ngắn hạn',
 }
 
 const RANK_COLOR: Record<number, string> = {
@@ -92,7 +99,10 @@ export default async function BidPage() {
                   <div key={bid.id} className="bg-white rounded-xl border border-[#E2E8F0] p-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs text-[#64748B] mb-0.5">{SLOT_LABEL[bid.slot_type]}</div>
+                        <div className="flex items-center gap-1 text-xs text-[#64748B] mb-0.5">
+                          {(() => { const Icon = SLOT_ICON[bid.slot_type]; return Icon ? <Icon className="w-3 h-3" strokeWidth={2} /> : null })()}
+                          {SLOT_LABEL[bid.slot_type]}
+                        </div>
                         <div className="font-semibold text-sm text-[#0D1B3D] leading-snug truncate">
                           {proj?.name_official ?? 'Dự án'}
                         </div>
@@ -143,7 +153,14 @@ export default async function BidPage() {
           <p>• Hạng được tính theo số credits bid/tuần — càng cao càng ưu tiên.</p>
           <p>• Top 3 bid cao nhất xuất hiện trên trang dự án theo đúng hạng.</p>
           <p>• Hạng cập nhật mỗi giờ. Hủy bid → mất hạng ngay lập tức.</p>
-          <p>• Floor bid: 🏠 Sale = 100 Cr · 🔑 Thuê dài hạn = 50 Cr · 🏨 Thuê ngắn hạn = 30 Cr</p>
+          <p className="flex items-center gap-1 flex-wrap">
+            <span>• Floor bid:</span>
+            <span className="inline-flex items-center gap-1"><Home className="w-3 h-3" strokeWidth={2} /> Sale = 100 Cr</span>
+            <span>·</span>
+            <span className="inline-flex items-center gap-1"><Key className="w-3 h-3" strokeWidth={2} /> Thuê dài hạn = 50 Cr</span>
+            <span>·</span>
+            <span className="inline-flex items-center gap-1"><Building2 className="w-3 h-3" strokeWidth={2} /> Thuê ngắn hạn = 30 Cr</span>
+          </p>
         </div>
       </main>
     </div>

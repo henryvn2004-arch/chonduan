@@ -1,11 +1,12 @@
 'use client'
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
+import { Home, Key } from 'lucide-react'
 import type { Mode } from '@/types/maps'
 
-const MODES: { value: Mode; label: string; icon: string }[] = [
-  { value: 'sale', label: 'Mua / Bán', icon: '🏠' },
-  { value: 'rent_long', label: 'Cho thuê', icon: '🔑' },
+const MODES: { value: Mode; label: string; Icon: React.ElementType }[] = [
+  { value: 'sale', label: 'Mua / Bán', Icon: Home },
+  { value: 'rent_long', label: 'Cho thuê', Icon: Key },
 ]
 
 interface Props {
@@ -24,19 +25,19 @@ export default function ModeToggle({ current }: Props) {
   }
 
   return (
-    <div className="flex rounded-xl overflow-hidden border border-[#E2E8F0] bg-white shadow-sm">
+    <div className="flex rounded-full overflow-hidden border border-[#E2E8F0] bg-white shadow-sm p-0.5 gap-0.5">
       {MODES.map((m) => (
         <button
           key={m.value}
           onClick={() => switchMode(m.value)}
           className={[
-            'flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors select-none',
+            'flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition-all select-none',
             current === m.value
-              ? 'bg-[#1565FF] text-white'
-              : 'text-[#64748B] hover:bg-[#F1F5F9]',
+              ? 'bg-[#1565FF] text-white shadow-sm'
+              : 'text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#0D1B3D]',
           ].join(' ')}
         >
-          <span>{m.icon}</span>
+          <m.Icon className="w-3.5 h-3.5" strokeWidth={2} />
           <span>{m.label}</span>
         </button>
       ))}

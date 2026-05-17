@@ -1,4 +1,5 @@
 import type { ProjectDetail } from '@/types/project'
+import { ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react'
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -42,13 +43,13 @@ export default function ReviewSection({ project }: { project: ProjectDetail }) {
             <div className="grid sm:grid-cols-2 gap-4">
               {project.review_pros_summary && (
                 <div className="p-3 bg-green-50 rounded-xl border border-green-100">
-                  <div className="text-xs font-medium text-green-700 mb-2">👍 Ưu điểm nổi bật</div>
+                  <div className="flex items-center gap-1 text-xs font-medium text-green-700 mb-2"><ThumbsUp className="w-3.5 h-3.5" strokeWidth={2} /> Ưu điểm nổi bật</div>
                   <p className="text-sm text-green-800">{project.review_pros_summary}</p>
                 </div>
               )}
               {project.review_cons_summary && (
                 <div className="p-3 bg-red-50 rounded-xl border border-red-100">
-                  <div className="text-xs font-medium text-red-600 mb-2">👎 Nhược điểm cần lưu ý</div>
+                  <div className="flex items-center gap-1 text-xs font-medium text-red-600 mb-2"><ThumbsDown className="w-3.5 h-3.5" strokeWidth={2} /> Nhược điểm cần lưu ý</div>
                   <p className="text-sm text-red-700">{project.review_cons_summary}</p>
                 </div>
               )}
@@ -56,7 +57,7 @@ export default function ReviewSection({ project }: { project: ProjectDetail }) {
           </div>
         ) : (
           <div className="text-center py-8">
-            <div className="text-4xl mb-3">💬</div>
+            <MessageSquare className="w-10 h-10 text-[#CBD5E1] mx-auto mb-3" strokeWidth={1.5} />
             <div className="text-sm font-medium text-[#0D1B3D] mb-1">Chưa có đánh giá</div>
             <p className="text-sm text-[#94A3B8]">Tính năng review cư dân sẽ ra mắt sớm.</p>
           </div>

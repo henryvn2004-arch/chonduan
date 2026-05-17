@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { Home, Key, BadgeCheck, Play, Music, Star } from 'lucide-react'
 import AgentContactButton from './AgentContactButton'
 
 interface AgentRow {
@@ -50,7 +51,8 @@ function VideoEmbed({ url, type }: { url: string; type: string }) {
         rel="noopener noreferrer"
         className="mt-3 flex items-center gap-2 text-xs text-[#1565FF] font-medium hover:underline"
       >
-        🎵 Xem video TikTok giới thiệu →
+        <Music className="w-3.5 h-3.5" strokeWidth={2} />
+        Xem video TikTok giới thiệu →
       </a>
     )
   }
@@ -129,7 +131,7 @@ function AgentCard({ agent, type, projectId }: { agent: AgentRow; type: 'sale' |
             {agent.display_name}
           </Link>
           {agent.verified_badge_active && (
-            <span className="text-[10px] font-semibold text-[#1565FF]">✅</span>
+            <BadgeCheck className="w-3.5 h-3.5 text-[#1565FF] shrink-0" strokeWidth={2.5} />
           )}
           {tierBadge && tierLabel && (
             <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-md ${tierBadge}`}>
@@ -137,15 +139,19 @@ function AgentCard({ agent, type, projectId }: { agent: AgentRow; type: 'sale' |
             </span>
           )}
           {agent.featured_video_url && (
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-red-50 text-red-600">
-              ▶ Video
+            <span className="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-red-50 text-red-600">
+              <Play className="w-2.5 h-2.5" strokeWidth={2} />
+              Video
             </span>
           )}
         </div>
 
         <div className="flex items-center gap-3 mt-1">
           {agent.avg_rating != null && (
-            <span className="text-xs text-yellow-600">★ {agent.avg_rating.toFixed(1)}</span>
+            <span className="inline-flex items-center gap-0.5 text-xs text-yellow-600">
+              <Star className="w-3 h-3 fill-yellow-400 stroke-yellow-500" strokeWidth={1.5} />
+              {agent.avg_rating.toFixed(1)}
+            </span>
           )}
           {dealCount > 0 && (
             <span className="text-xs text-[#94A3B8]">{dealCount} giao dịch</span>
@@ -209,7 +215,7 @@ export default async function AgentsSection({
         {/* Sale agents */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm font-semibold text-[#0D1B3D]">🏠 Mua / Bán</span>
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0D1B3D]"><Home className="w-4 h-4 text-[#1565FF]" strokeWidth={2} /> Mua / Bán</span>
             {saleAgents.length > 0 && (
               <span className="text-xs text-[#64748B] bg-[#F1F5F9] px-2 py-0.5 rounded-full">Top {saleAgents.length} đấu thầu slot</span>
             )}
@@ -226,7 +232,7 @@ export default async function AgentsSection({
         {/* Rent agents */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm font-semibold text-[#0D1B3D]">🔑 Cho thuê</span>
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0D1B3D]"><Key className="w-4 h-4 text-[#1565FF]" strokeWidth={2} /> Cho thuê</span>
             {rentAgents.length > 0 && (
               <span className="text-xs text-[#64748B] bg-[#F1F5F9] px-2 py-0.5 rounded-full">Top {rentAgents.length} đấu thầu slot</span>
             )}

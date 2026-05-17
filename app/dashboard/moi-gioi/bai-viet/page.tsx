@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Zap } from 'lucide-react'
 import ArticleEditor from './ArticleEditor'
 
 export const metadata = { title: 'Bài viết của tôi — ChonDuAn' }
@@ -82,8 +83,8 @@ export default async function AgentArticlesPage() {
                         {art.title}
                       </Link>
                       {art.is_boosted && art.boost_expires_at && new Date(art.boost_expires_at) > new Date() && (
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
-                          🚀 Boosted
+                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                          <Zap className="w-2.5 h-2.5" strokeWidth={2.5} /> Boosted
                         </span>
                       )}
                       {art.is_boosted && art.boost_expires_at && new Date(art.boost_expires_at) <= new Date() && (

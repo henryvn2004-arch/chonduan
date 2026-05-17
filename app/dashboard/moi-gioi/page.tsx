@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { BadgeCheck } from 'lucide-react'
 import MarkLeadButton from './MarkLeadButton'
 
 const SLOT_TYPE_LABEL: Record<string, string> = {
@@ -98,8 +99,8 @@ export default async function AgentDashboardPage() {
             </span>
           )}
           {agent.verified_badge_active ? (
-            <span className="text-xs bg-blue-50 text-[#1565FF] px-2.5 py-1 rounded-full font-semibold">
-              ✅ Verified
+            <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-[#1565FF] px-2.5 py-1 rounded-full font-semibold">
+              <BadgeCheck className="w-3.5 h-3.5" strokeWidth={2.5} /> Verified
             </span>
           ) : (
             <Link

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Bot } from 'lucide-react'
 import type { ProjectDetail } from '@/types/project'
 
 function AudioPlayer({ url }: { url: string }) {
@@ -61,7 +62,7 @@ export default function FAQSection({ project }: { project: ProjectDetail }) {
           </div>
         ) : (
           <div className="text-center py-6">
-            <div className="text-4xl mb-3">🤖</div>
+            <Bot className="w-10 h-10 text-[#CBD5E1] mx-auto mb-3" strokeWidth={1.5} />
             <p className="text-sm text-[#94A3B8]">
               AI FAQ sẽ được tạo tự động từ dữ liệu dự án.
             </p>

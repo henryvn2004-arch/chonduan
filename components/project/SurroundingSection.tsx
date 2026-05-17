@@ -1,4 +1,5 @@
 import type { ProjectDetail } from '@/types/project'
+import { TrainFront, Cross, Globe, School, Building2, ShoppingCart, Building, PlaneTakeoff } from 'lucide-react'
 
 function fmtDist(m: number | null): string {
   if (!m) return '—'
@@ -6,15 +7,15 @@ function fmtDist(m: number | null): string {
   return `${m} m`
 }
 
-const ITEMS: { key: keyof ProjectDetail; label: string; icon: string }[] = [
-  { key: 'nearest_metro_m', label: 'Metro gần nhất', icon: '🚇' },
-  { key: 'nearest_hospital_m', label: 'Bệnh viện', icon: '🏥' },
-  { key: 'nearest_international_school_m', label: 'Trường QT', icon: '🌏' },
-  { key: 'nearest_public_school_m', label: 'Trường công', icon: '🏫' },
-  { key: 'nearest_mall_m', label: 'Trung tâm TM', icon: '🏬' },
-  { key: 'nearest_supermarket_m', label: 'Siêu thị', icon: '🛒' },
-  { key: 'distance_to_cbd_km', label: 'Trung tâm TP', icon: '🏙️' },
-  { key: 'distance_to_airport_km', label: 'Sân bay', icon: '✈️' },
+const ITEMS: { key: keyof ProjectDetail; label: string; Icon: React.ElementType }[] = [
+  { key: 'nearest_metro_m', label: 'Metro gần nhất', Icon: TrainFront },
+  { key: 'nearest_hospital_m', label: 'Bệnh viện', Icon: Cross },
+  { key: 'nearest_international_school_m', label: 'Trường QT', Icon: Globe },
+  { key: 'nearest_public_school_m', label: 'Trường công', Icon: School },
+  { key: 'nearest_mall_m', label: 'Trung tâm TM', Icon: Building2 },
+  { key: 'nearest_supermarket_m', label: 'Siêu thị', Icon: ShoppingCart },
+  { key: 'distance_to_cbd_km', label: 'Trung tâm TP', Icon: Building },
+  { key: 'distance_to_airport_km', label: 'Sân bay', Icon: PlaneTakeoff },
 ]
 
 export default function SurroundingSection({ project }: { project: ProjectDetail }) {
@@ -37,7 +38,9 @@ export default function SurroundingSection({ project }: { project: ProjectDetail
 
               return (
                 <div key={String(item.key)} className="text-center p-4 bg-[#F8FAFC] rounded-xl">
-                  <div className="text-2xl mb-1">{item.icon}</div>
+                  <div className="flex justify-center mb-2">
+                    <item.Icon className="w-6 h-6 text-[#1565FF]" strokeWidth={1.75} />
+                  </div>
                   <div className="text-base font-bold text-[#0D1B3D]">{display}</div>
                   <div className="text-xs text-[#64748B] mt-0.5">{item.label}</div>
                   {item.key === 'nearest_metro_m' && project.nearest_metro_name && (
