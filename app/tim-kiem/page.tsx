@@ -5,6 +5,7 @@ import { searchProjects } from '@/lib/search'
 import SearchClient from './SearchClient'
 import Nav from '@/components/nav/Nav'
 import type { FilterState, Mode, ProjectPin } from '@/types/maps'
+import { projectUrl } from '@/lib/project-url'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -43,7 +44,7 @@ function ProjectCard({ p, mode }: { p: ProjectPin; mode: Mode }) {
 
   return (
     <Link
-      href={`/du-an/${p.province}/${p.slug}`}
+      href={projectUrl(p.province, p.slug)}
       className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover:shadow-md transition-shadow group"
     >
       <div className="relative h-44 bg-[#F1F5F9]">

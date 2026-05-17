@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { slugify } from '@/lib/project-url'
 
 const BASE_URL = 'https://chonduan.vn'
 
@@ -24,7 +25,7 @@ export async function GET() {
 
   for (const p of projects ?? []) {
     if (p.province && p.slug) {
-      urls.push(`${BASE_URL}/du-an/${encodeURIComponent(p.province)}/${p.slug}`)
+      urls.push(`${BASE_URL}/du-an/${slugify(p.province)}/${p.slug}`)
     }
   }
   for (const a of agents ?? []) {

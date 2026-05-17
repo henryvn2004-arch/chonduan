@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import type { ProjectPin, Mode } from '@/types/maps'
+import { projectUrl } from '@/lib/project-url'
 
 const PROPERTY_TYPE_LABEL: Record<string, string> = {
   chung_cu: 'Chung cư',
@@ -147,7 +148,7 @@ function SheetContent({
 
       <div className="flex gap-2">
         <Link
-          href={`/du-an/${pin.province.toLowerCase().replace(/\s+/g, '-')}/${pin.slug}`}
+          href={projectUrl(pin.province, pin.slug)}
           className="flex-1 text-center text-sm font-medium bg-[#1565FF] text-white rounded-xl py-2 hover:bg-[#0D4FCC] transition-colors"
         >
           Xem dự án

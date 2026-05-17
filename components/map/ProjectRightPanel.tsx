@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { ProjectPin, Mode, ProjectStatus } from '@/types/maps'
+import { projectUrl } from '@/lib/project-url'
 
 const STATUS_CONFIG: Record<ProjectStatus, { label: string; color: string }> = {
   sap_mo_ban: { label: 'Sắp mở bán', color: 'bg-[#FFF7ED] text-[#C2410C]' },
@@ -35,9 +36,6 @@ function fmtRent(pin: ProjectPin) {
   return `Từ ${Math.round(pin.rent_2br_avg_monthly_vnd / 1_000_000)} tr/tháng`
 }
 
-function slugProvince(province: string) {
-  return province.toLowerCase().replace(/\s+/g, '-')
-}
 
 interface Props {
   pins: ProjectPin[]
@@ -166,7 +164,7 @@ export default function ProjectRightPanel({ pins, selectedPin, onPinSelect, mode
       {selectedPin && (
         <div className="shrink-0 border-t border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3">
           <Link
-            href={`/du-an/${slugProvince(selectedPin.province)}/${selectedPin.slug}`}
+            href={projectUrl(selectedPin.province, selectedPin.slug)}
             className="block w-full text-center text-sm font-semibold bg-[#1565FF] text-white py-2.5 rounded-xl hover:bg-[#0D4FCC] transition-colors shadow-sm"
           >
             Xem dự án →
