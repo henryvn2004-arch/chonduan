@@ -235,13 +235,12 @@ export default async function AgentDashboardPage() {
                   <span>Đã nạp: {fmtCr(wallet?.total_topped_up_credits ?? 0)}</span>
                   <span>Đã chi: {fmtCr(wallet?.total_spent_credits ?? 0)}</span>
                 </div>
-                <button
-                  disabled
-                  className="mt-3 w-full bg-[#1565FF] text-white text-xs font-semibold py-2.5 rounded-lg opacity-60 cursor-not-allowed"
-                  title="Sắp ra mắt"
+                <Link
+                  href="/dashboard/moi-gioi/nap-tien"
+                  className="mt-3 block text-center w-full bg-[#1565FF] text-white text-xs font-semibold py-2.5 rounded-lg hover:bg-[#0D4FCC] transition-colors"
                 >
-                  Nạp tiền (sắp ra mắt)
-                </button>
+                  Nạp Credits
+                </Link>
               </div>
             </div>
           </div>
