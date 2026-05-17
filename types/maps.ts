@@ -5,6 +5,7 @@ export interface ProjectPin {
   name_official: string
   slug: string
   province: string
+  district: string | null
   lat: number
   lng: number
   tier: 'binh_dan' | 'trung_cap' | 'cao_cap' | 'hang_sang' | null

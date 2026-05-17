@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await supabase
     .from('projects')
     .select(
-      'id, name_official, slug, province, lat, lng, tier, rent_demand_score, ' +
+      'id, name_official, slug, province, district, lat, lng, tier, rent_demand_score, ' +
       'price_primary_per_m2_min, price_secondary_per_m2_avg, rent_2br_avg_monthly_vnd, ' +
       'description_short, property_type'
     )
