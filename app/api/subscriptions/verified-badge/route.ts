@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Verified badge plan not configured' }, { status: 500 })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://chonduan.vn'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://phaplyduan.vn'
 
   const { subscriptionId, approveUrl } = await createSubscription({
     planId: PLAN_ID,

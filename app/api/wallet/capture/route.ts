@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const paymentId = searchParams.get('payment_id')
   const paypalToken = searchParams.get('token') // PayPal order ID
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://chonduan.vn'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://phaplyduan.vn'
 
   if (!paymentId) {
     return NextResponse.redirect(`${appUrl}/dashboard/moi-gioi/nap-tien?error=invalid`)

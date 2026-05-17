@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://chonduan.vn'
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://phaplyduan.vn'
 const CRON_SECRET = process.env.CRON_SECRET
 
 // 8 fixed topic tags — rotate through them

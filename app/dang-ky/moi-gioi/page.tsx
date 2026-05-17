@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import SignupClient from './SignupClient'
 
 export const metadata: Metadata = {
-  title: 'Đăng ký môi giới — ChonDuAn',
+  title: 'Đăng ký môi giới — PhaplyDuan',
 }
 
 export default function DangKyMoiGioiPage() {

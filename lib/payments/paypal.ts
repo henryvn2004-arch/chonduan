@@ -41,7 +41,7 @@ export async function createPayPalOrder(params: {
       intent: 'CAPTURE',
       purchase_units: [{
         reference_id: params.internalOrderId,
-        description: `ChonDuAn Credits — ${params.packageName}`,
+        description: `PhaplyDuan Credits — ${params.packageName}`,
         amount: { currency_code: 'USD', value: amountUsd },
       }],
       payment_source: {
@@ -49,7 +49,7 @@ export async function createPayPalOrder(params: {
           experience_context: {
             return_url: params.returnUrl,
             cancel_url: params.cancelUrl,
-            brand_name: 'ChonDuAn',
+            brand_name: 'PhaplyDuan',
             locale: 'vi-VN',
             landing_page: 'LOGIN',
             user_action: 'PAY_NOW',

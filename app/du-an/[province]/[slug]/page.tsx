@@ -116,7 +116,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const project = await fetchProject(province, slug)
   if (!project) return { title: 'Dự án không tồn tại' }
 
-  const title = `${project.name_official} | ChonDuAn`
+  const title = `${project.name_official} | PhaplyDuan`
   const description = project.description_short ?? `Dự án ${project.name_official} tại ${project.province}.`
 
   return {
@@ -143,7 +143,7 @@ export default async function ProjectHubPage({ params, searchParams }: Props) {
     '@type': 'RealEstateListing',
     name: project.name_official,
     description: project.description_short ?? undefined,
-    url: `https://chonduan.vn/du-an/${encodeURIComponent(province)}/${slug}`,
+    url: `https://phaplyduan.vn/du-an/${encodeURIComponent(province)}/${slug}`,
     image: project.banner_url ?? project.logo_url ?? undefined,
     address: {
       '@type': 'PostalAddress',
@@ -176,8 +176,8 @@ export default async function ProjectHubPage({ params, searchParams }: Props) {
       {/* Minimal nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-[#E2E8F0] h-14 flex items-center px-4 gap-3">
         <Link href="/" className="shrink-0">
-          <Image src="/logo.png" alt="ChonDuAn" width={120} height={34} className="h-8 w-auto hidden sm:block" priority />
-          <Image src="/favicon.png" alt="ChonDuAn" width={32} height={32} className="h-8 w-auto sm:hidden" priority />
+          <Image src="/logo.png" alt="PhaplyDuan" width={120} height={34} className="h-8 w-auto hidden sm:block" priority />
+          <Image src="/favicon.png" alt="PhaplyDuan" width={32} height={32} className="h-8 w-auto sm:hidden" priority />
         </Link>
         <nav className="text-sm text-[#64748B] flex items-center gap-1 ml-2">
           <Link href="/" className="hover:text-[#1565FF]">Trang chủ</Link>

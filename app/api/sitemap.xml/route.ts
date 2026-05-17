@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 
-const BASE_URL = 'https://chonduan.vn'
+const BASE_URL = 'https://phaplyduan.vn'
 
 function xml(urls: string[]): string {
   const entries = urls

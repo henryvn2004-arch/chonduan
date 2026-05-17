@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Zap } from 'lucide-react'
 import ArticleEditor from './ArticleEditor'
 
-export const metadata = { title: 'Bài viết của tôi — ChonDuAn' }
+export const metadata = { title: 'Bài viết của tôi — PhaplyDuan' }
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })

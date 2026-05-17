@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import TopupForm from './TopupForm'
 
-export const metadata = { title: 'Nạp Credits — ChonDuAn' }
+export const metadata = { title: 'Nạp Credits — PhaplyDuan' }
 
 export default async function TopupPage({
   searchParams,

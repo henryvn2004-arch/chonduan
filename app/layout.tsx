@@ -11,10 +11,10 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: 'ChonDuAn — Chọn dự án tốt nhất',
-    template: '%s | ChonDuAn',
+    default: 'PhaplyDuan — Chọn dự án tốt nhất',
+    template: '%s | PhaplyDuan',
   },
-  description: 'Nền tảng tìm kiếm bất động sản dự án Việt Nam. Map-first, data-driven.',
+  description: 'Nền tảng tra cứu pháp lý và tìm kiếm bất động sản dự án Việt Nam. Map-first, data-driven.',
   icons: {
     icon: '/favicon.png',
     apple: '/favicon.png',

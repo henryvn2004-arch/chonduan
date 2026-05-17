@@ -5,7 +5,7 @@ import { Home, Key, Building2 } from 'lucide-react'
 import BidForm from './BidForm'
 import CancelBidButton from './CancelBidButton'
 
-export const metadata = { title: 'Bid Slot — ChonDuAn' }
+export const metadata = { title: 'Bid Slot — PhaplyDuan' }
 
 const SLOT_ICON: Record<string, React.ElementType> = {
   sale: Home,
