@@ -45,7 +45,7 @@ export default async function AgentDashboardPage() {
   // Get agent profile
   const { data: agent } = await supabase
     .from('agents')
-    .select('id, display_name, slug, tier, kyc_status, leads_received_count, deals_closed_count')
+    .select('id, display_name, slug, tier, kyc_status, leads_received_count, deals_closed_count, verified_badge_active, subscription_status')
     .eq('user_id', user.id)
     .single()
 
@@ -96,6 +96,18 @@ export default async function AgentDashboardPage() {
             <span className="text-xs bg-yellow-50 text-yellow-700 px-2.5 py-1 rounded-full font-medium">
               Chờ xét duyệt KYC
             </span>
+          )}
+          {agent.verified_badge_active ? (
+            <span className="text-xs bg-blue-50 text-[#1565FF] px-2.5 py-1 rounded-full font-semibold">
+              ✅ Verified
+            </span>
+          ) : (
+            <Link
+              href="/dashboard/moi-gioi/verified-badge"
+              className="text-xs bg-gray-100 text-[#64748B] px-2.5 py-1 rounded-full font-medium hover:bg-blue-50 hover:text-[#1565FF] transition-colors"
+            >
+              + Lấy Verified Badge
+            </Link>
           )}
           <Link
             href={`/moi-gioi/${agent.slug}`}

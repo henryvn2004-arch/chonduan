@@ -20,7 +20,26 @@
       "Bash(Remove-Item \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\great-nightingale-c0af3c\\\\public\\\\logo-icon.svg\" -Force)",
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\great-nightingale-c0af3c\\\\app\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)",
       "Bash(head -50 node_modules/@googlemaps/js-api-loader/dist/index.esm.js)",
-      "Bash(head -50 node_modules/@googlemaps/js-api-loader/dist/index.js)"
+      "Bash(head -50 node_modules/@googlemaps/js-api-loader/dist/index.js)",
+      "mcp__763a5dc5-24ea-4c48-8e1b-479961fbeb1d__list_projects",
+      "mcp__763a5dc5-24ea-4c48-8e1b-479961fbeb1d__apply_migration",
+      "Bash(git fetch *)",
+      "Bash(git rebase *)",
+      "Bash(git stash *)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\admiring-swirles-f7bba8\\\\app\\\\api\\\\leads\\\\[id]\" && mkdir -p \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\admiring-swirles-f7bba8\\\\app\\\\dashboard\\\\moi-gioi\\\\bid\" && echo \"dirs created\")",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\admiring-swirles-f7bba8\\\\app\" -Recurse -Include \"page.tsx\", \"layout.tsx\" | Select-Object -ExpandProperty FullName | ForEach-Object { $_.Replace\\(\"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\admiring-swirles-f7bba8\\\\app\\\\\", \"\"\\) } | Sort-Object)",
+      "mcp__763a5dc5-24ea-4c48-8e1b-479961fbeb1d__execute_sql",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(Get-ChildItem \"C:\\\\Users\\\\vnc-f4\\\\chonduan\" -Filter \".env*\" -Force)",
+      "Bash(Select-Object Name)",
+      "Bash(grep -E \"\\\\.\\(ts|tsx|js|jsx\\)$\")",
+      "Bash(xargs grep -l \"google\\\\.maps\\\\|Maps.*JS\\\\|@googlemaps\\\\|loader.*google\")",
+      "Bash(gh run *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('test:', d.get\\('scripts',{}\\).get\\('test'\\)\\); print\\('dev:', d.get\\('scripts',{}\\).get\\('dev'\\)\\)\")",
+      "Bash(node -e \"const d=require\\('./package.json'\\); console.log\\('test:',d.scripts.test\\); console.log\\('dev:',d.scripts.dev\\)\")",
+      "Bash(node -e \"const d=require\\('./package.json'\\); const keys=Object.keys\\({...d.dependencies,...d.devDependencies}\\); console.log\\(keys.filter\\(k=>k.includes\\('playwright'\\)\\).join\\('\\\\n'\\)\\)\")"
     ]
   }
 }

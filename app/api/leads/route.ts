@@ -103,6 +103,8 @@ export async function POST(req: NextRequest) {
       is_verified: isVerified,
       source_url: req.headers.get('referer') ?? null,
       status: 'new',
+      credits_charged: creditsCharged,
+      charge_amount_vnd: creditsCharged * 1000,
     }).select('id').single()
 
     if (error) throw new Error(error.message)

@@ -36,6 +36,8 @@ export default async function AdminProjectListPage() {
           <p className="text-xs text-[#8A94A6] mt-0.5">{projects?.length ?? 0} dự án</p>
         </div>
         <div className="flex items-center gap-4">
+          <Link href="/dashboard/admin/kyc" className="text-sm text-[#64748B] hover:text-[#0D1B3D]">KYC</Link>
+          <Link href="/dashboard/admin/leads" className="text-sm text-[#64748B] hover:text-[#0D1B3D]">Leads</Link>
           <GeocodeBatchButton />
           <LogoutButton />
         </div>
