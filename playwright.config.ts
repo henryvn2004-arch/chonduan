@@ -23,9 +23,5 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: true,
     timeout: 120_000,
-    env: {
-      // Inherit all current env vars so .env.local is picked up if set
-      ...process.env as Record<string, string>,
-    },
   },
 })
