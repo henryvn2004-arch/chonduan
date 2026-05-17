@@ -87,9 +87,9 @@ export default function ProjectRightPanel({ pins, selectedPin, onPinSelect, mode
           const location = [pin.district, pin.province].filter(Boolean).join(', ')
 
           return (
-            <button
+            <Link
               key={pin.id}
-              onClick={() => onPinSelect(isSelected ? null : pin)}
+              href={`/du-an/${slugProvince(pin.province)}/${pin.slug}`}
               className={[
                 'w-full text-left px-3 py-3 flex gap-3 hover:bg-[#F8FAFC] transition-colors',
                 isSelected ? 'bg-[#EFF6FF] hover:bg-[#EFF6FF]' : '',
@@ -122,7 +122,7 @@ export default function ProjectRightPanel({ pins, selectedPin, onPinSelect, mode
                     {pin.name_official}
                   </h3>
                   <button
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
                     className="shrink-0 w-6 h-6 flex items-center justify-center text-[#CBD5E1] hover:text-[#F43F5E] transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -157,22 +157,10 @@ export default function ProjectRightPanel({ pins, selectedPin, onPinSelect, mode
                   <div className="text-xs font-bold text-[#1565FF] mt-1.5">{price}</div>
                 )}
               </div>
-            </button>
+            </Link>
           )
         })}
       </div>
-
-      {/* Selected pin detail footer */}
-      {selectedPin && (
-        <div className="shrink-0 border-t border-[#E2E8F0] bg-[#F8FAFC] px-4 py-3">
-          <Link
-            href={`/du-an/${slugProvince(selectedPin.province)}/${selectedPin.slug}`}
-            className="block w-full text-center text-sm font-semibold bg-[#1565FF] text-white py-2.5 rounded-xl hover:bg-[#0D4FCC] transition-colors shadow-sm"
-          >
-            Xem dự án →
-          </Link>
-        </div>
-      )}
     </aside>
   )
 }
