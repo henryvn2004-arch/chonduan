@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { slugify } from '@/lib/project-url'
 import { NextRequest, NextResponse } from 'next/server'
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
@@ -60,7 +61,7 @@ async function fetchRelatedProjects(
 
 async function generateArticle(tag: string, relatedProjects: typeof fetchRelatedProjects extends (...args: any[]) => Promise<infer T> ? T : never): Promise<{ title: string; content: string } | null> {
   const projectLinks = relatedProjects
-    .map((p) => `- [${p.name_official}](${BASE_URL}/du-an/${encodeURIComponent(p.province)}/${p.slug})`)
+    .map((p) => `- [${p.name_official}](${BASE_URL}/du-an/${slugify(p.province)}/${p.slug})`)
     .join('\n')
 
   const prompt = `Viết một bài khảo luận bất động sản Việt Nam 1200-2000 từ về chủ đề: "${tag.replace(/-/g, ' ')}".

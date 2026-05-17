@@ -20,7 +20,10 @@
       "Bash(Remove-Item \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\great-nightingale-c0af3c\\\\public\\\\logo-icon.svg\" -Force)",
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\vnc-f4\\\\chonduan\\\\.claude\\\\worktrees\\\\great-nightingale-c0af3c\\\\app\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)",
       "Bash(head -50 node_modules/@googlemaps/js-api-loader/dist/index.esm.js)",
-      "Bash(head -50 node_modules/@googlemaps/js-api-loader/dist/index.js)"
+      "Bash(head -50 node_modules/@googlemaps/js-api-loader/dist/index.js)",
+      "Bash(git rebase *)",
+      "Bash(GIT_EDITOR=true git rebase --continue)",
+      "Bash(EDITOR=true git rebase --continue)"
     ]
   }
 }
