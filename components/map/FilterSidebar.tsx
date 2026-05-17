@@ -251,7 +251,6 @@ interface Props {
   mode: Mode
   filters: FilterState
   onChange: (f: FilterState) => void
-  count: number
   mobile?: boolean  // when true: full-width, no border-r, no own header
 }
 
@@ -259,7 +258,7 @@ const DEFAULT_FILTERS: FilterState = {
   property_type: '', price_min: 0, price_max: PRICE_MAX,
 }
 
-export default function FilterSidebar({ mode, filters, onChange, count, mobile }: Props) {
+export default function FilterSidebar({ mode, filters, onChange, mobile }: Props) {
   const [local, setLocal] = useState<FilterState>(filters)
 
   const update = useCallback((patch: Partial<FilterState>) => {
@@ -498,12 +497,6 @@ export default function FilterSidebar({ mode, filters, onChange, count, mobile }
 
       </div>
 
-      {/* CTA */}
-      <div className="px-3 py-3 border-t border-[#E2E8F0] shrink-0">
-        <button className="w-full bg-[#1565FF] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#0D4FCC] transition-colors shadow-sm">
-          {count > 0 ? `Xem ${count} dự án` : 'Xem dự án'}
-        </button>
-      </div>
     </aside>
   )
 }

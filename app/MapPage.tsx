@@ -73,7 +73,6 @@ export default function MapPage() {
             mode={mode}
             filters={filters}
             onChange={handleFiltersChange}
-            count={pins.length}
           />
         </div>
 
@@ -161,7 +160,6 @@ export default function MapPage() {
                 mode={mode}
                 filters={filters}
                 onChange={handleFiltersChange}
-                count={pins.length}
                 mobile
               />
             </div>
