@@ -1,67 +1,74 @@
 import { getPlaceCache, setPlaceCache, PlaceRow } from './cache'
 
-const GMAPS_BASE = 'https://maps.googleapis.com/maps/api'
+const NOMINATIM = 'https://nominatim.openstreetmap.org'
+const UA = 'ChonDuAn/1.0 (chonduan.vn)'
 
 export type PlaceResult = PlaceRow
 
-function mapRawToPlace(r: Record<string, unknown>): PlaceResult {
-  const geo = r.geometry as { location: { lat: number; lng: number } }
+function nominatimToPlace(r: Record<string, unknown>): PlaceResult {
   return {
-    placeId: r.place_id as string,
-    name: r.name as string,
-    formattedAddress: (r.formatted_address ?? r.vicinity ?? '') as string,
-    lat: geo.location.lat,
-    lng: geo.location.lng,
-    types: (r.types as string[]) ?? [],
-    rating: r.rating != null ? Number(r.rating) : null,
-    userRatingsTotal: r.user_ratings_total != null ? Number(r.user_ratings_total) : null,
-    rawResponse: r as Record<string, unknown>,
+    placeId: `osm:${r.osm_type}/${r.osm_id}`,
+    name: (r.name ?? r.display_name ?? '') as string,
+    formattedAddress: r.display_name as string,
+    lat: parseFloat(r.lat as string),
+    lng: parseFloat(r.lon as string),
+    types: [(r.type as string) ?? (r.category as string) ?? 'place'],
+    rating: null,
+    userRatingsTotal: null,
+    rawResponse: r,
   }
 }
 
-/**
- * Text Search — always calls API (no query-level cache), but upserts each
- * returned place into gmaps_places_cache by place_id (90d TTL).
- */
+// Text search via Nominatim — no query-level cache, caches each result by osm id
 export async function textSearch(
   query: string,
   options?: { region?: string }
 ): Promise<PlaceResult[]> {
-  const key = process.env.GOOGLE_MAPS_API_KEY!
-  const params = new URLSearchParams({ query, key })
-  if (options?.region) params.set('region', options.region)
+  const params = new URLSearchParams({
+    q: query,
+    format: 'json',
+    limit: '5',
+    addressdetails: '1',
+    countrycodes: options?.region ?? 'vn',
+  })
 
-  const res = await fetch(`${GMAPS_BASE}/place/textsearch/json?${params}`)
+  const res = await fetch(`${NOMINATIM}/search?${params}`, {
+    headers: { 'User-Agent': UA },
+  })
   const data = await res.json()
 
-  if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-    throw new Error(`Places Text Search failed: ${data.status}`)
-  }
+  if (!Array.isArray(data)) return []
 
-  const results: PlaceResult[] = (data.results ?? []).map(mapRawToPlace)
-
+  const results: PlaceResult[] = data.map(nominatimToPlace)
   await Promise.all(results.map((p) => setPlaceCache(p)))
-
   return results
 }
 
-/**
- * Place Details by place_id — checks 90d cache first, falls back to API.
- */
+// Lookup by OSM place_id ("osm:node/12345") — checks cache first
 export async function getPlaceDetails(placeId: string): Promise<PlaceResult | null> {
   const cached = await getPlaceCache(placeId)
   if (cached) return cached
 
-  const key = process.env.GOOGLE_MAPS_API_KEY!
-  const fields = 'place_id,name,formatted_address,geometry,types,rating,user_ratings_total'
-  const res = await fetch(
-    `${GMAPS_BASE}/place/details/json?place_id=${placeId}&fields=${fields}&key=${key}`
-  )
+  // Parse "osm:node/12345" → osm_type=node, osm_id=12345
+  const match = placeId.match(/^osm:(\w+)\/(\d+)$/)
+  if (!match) return null
+
+  const [, osmType, osmId] = match
+  const params = new URLSearchParams({
+    osm_type: osmType[0].toUpperCase(), // N, W, R
+    osm_id: osmId,
+    format: 'json',
+    addressdetails: '1',
+  })
+
+  const res = await fetch(`${NOMINATIM}/lookup?${params}`, {
+    headers: { 'User-Agent': UA },
+  })
   const data = await res.json()
 
-  if (data.status !== 'OK' || !data.result) return null
+  if (!Array.isArray(data) || !data[0]) return null
 
-  const place = mapRawToPlace(data.result)
+  const place = nominatimToPlace(data[0])
   await setPlaceCache(place)
   return place
 }

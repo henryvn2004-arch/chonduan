@@ -1,13 +1,14 @@
 import { createHash } from 'crypto'
 import { getGeocodeCache, setGeocodeCache } from './cache'
 
-const GMAPS_BASE = 'https://maps.googleapis.com/maps/api'
+const NOMINATIM = 'https://nominatim.openstreetmap.org'
+const UA = 'ChonDuAn/1.0 (chonduan.vn)'
 
 export interface GeocodeResult {
   lat: number
   lng: number
   formattedAddress: string
-  placeId: string
+  placeId: string  // "osm:node/12345" format
 }
 
 export async function geocode(address: string): Promise<GeocodeResult | null> {
@@ -17,20 +18,27 @@ export async function geocode(address: string): Promise<GeocodeResult | null> {
   const cached = await getGeocodeCache(hash)
   if (cached) return cached
 
-  const key = process.env.GOOGLE_MAPS_API_KEY!
-  const res = await fetch(
-    `${GMAPS_BASE}/geocode/json?address=${encodeURIComponent(address)}&key=${key}`
-  )
+  const params = new URLSearchParams({
+    q: address,
+    format: 'json',
+    limit: '1',
+    countrycodes: 'vn',
+    addressdetails: '1',
+  })
+
+  const res = await fetch(`${NOMINATIM}/search?${params}`, {
+    headers: { 'User-Agent': UA },
+  })
   const data = await res.json()
 
-  if (data.status !== 'OK' || !data.results?.[0]) return null
+  if (!data?.[0]) return null
 
-  const r = data.results[0]
+  const r = data[0]
   const result: GeocodeResult = {
-    lat: r.geometry.location.lat,
-    lng: r.geometry.location.lng,
-    formattedAddress: r.formatted_address,
-    placeId: r.place_id,
+    lat: parseFloat(r.lat),
+    lng: parseFloat(r.lon),
+    formattedAddress: r.display_name,
+    placeId: `osm:${r.osm_type}/${r.osm_id}`,
   }
 
   await setGeocodeCache(hash, address, result)
