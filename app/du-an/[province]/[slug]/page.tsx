@@ -28,7 +28,9 @@ interface Props {
 async function fetchProject(province: string, slug: string): Promise<ProjectDetail | null> {
   const supabase = await createClient()
 
-  const { data: project } = await supabase
+  // NOTE: select only columns that actually exist in the DB schema.
+  // DB amenity columns differ from the ProjectDetail type — see remap block below.
+  const { data: project, error } = await supabase
     .from('projects')
     .select(`
       id, slug, name_official, name_aliases, province, district, ward, address_full, lat, lng,
@@ -45,10 +47,11 @@ async function fetchProject(province: string, slug: string): Promise<ProjectDeta
       is_expat_friendly, expat_concentration_score,
       land_origin_type, red_book_status, ownership_term,
       construction_permit_no, investment_approval_no, legal_issues_text, legal_score, legal_last_verified,
-      has_pool, has_gym, has_tennis_court, has_basketball_court, has_kids_playground,
-      has_bbq_area, has_spa, has_sauna, has_coworking, has_sky_garden, has_rooftop,
-      has_supermarket, has_restaurant, has_cafe, has_clinic, has_kindergarten,
-      has_shopping_mall, has_ev_charging, has_smart_home, has_concierge,
+      has_pool, has_gym, has_tennis_court, has_basketball_court,
+      has_kid_playground, has_bbq_area, has_kindergarten,
+      has_mall_internal, has_supermarket_internal, has_cafe_restaurant,
+      has_clubhouse, has_library, has_park_garden,
+      has_24h_security, has_ev_charging, has_smart_home,
       nearest_metro_m, nearest_metro_name, nearest_public_school_m, nearest_international_school_m,
       nearest_hospital_m, nearest_mall_m, nearest_supermarket_m, distance_to_cbd_km, distance_to_airport_km,
       service_fee_per_m2_vnd, parking_motorbike_monthly, parking_car_monthly,
@@ -63,7 +66,7 @@ async function fetchProject(province: string, slug: string): Promise<ProjectDeta
     .eq('slug', slug)
     .single()
 
-  if (!project) return null
+  if (error || !project) return null
 
   const [{ data: priceHistory }, { data: rentalHistory }] = await Promise.all([
     supabase
@@ -81,13 +84,30 @@ async function fetchProject(province: string, slug: string): Promise<ProjectDeta
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dev = (project as any).developers
+  const raw = project as any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dev = raw.developers
 
+  // Remap DB column names → ProjectDetail type names (kept for backward compat with components)
   return {
     ...(project as unknown as ProjectDetail),
     developer: dev ?? null,
     price_history: priceHistory ?? [],
     rental_history: rentalHistory ?? [],
+    // amenity remaps
+    has_kids_playground:  raw.has_kid_playground    ?? null,
+    has_supermarket:      raw.has_supermarket_internal ?? null,
+    has_restaurant:       raw.has_cafe_restaurant   ?? null,
+    has_cafe:             raw.has_cafe_restaurant   ?? null,
+    has_shopping_mall:    raw.has_mall_internal     ?? null,
+    // columns not in DB → null (AmenitiesSection handles null gracefully)
+    has_spa:      null,
+    has_sauna:    null,
+    has_coworking: null,
+    has_sky_garden: null,
+    has_rooftop:  null,
+    has_clinic:   null,
+    has_concierge: null,
   }
 }
 
