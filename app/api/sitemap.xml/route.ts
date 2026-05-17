@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { slugify } from '@/lib/project-url'
+import { projectPath } from '@/lib/utils/slug'
 
 const BASE_URL = 'https://chonduan.vn'
 
@@ -16,7 +16,7 @@ export async function GET() {
   const supabase = await createClient()
 
   const [{ data: projects }, { data: agents }, { data: articles }] = await Promise.all([
-    supabase.from('projects').select('province, slug').eq('published', true).limit(10000),
+    supabase.from('projects').select('province, district, slug').eq('published', true).limit(10000),
     supabase.from('agents').select('slug').limit(5000),
     supabase.from('khao_luan').select('slug').eq('published', true).limit(5000),
   ])
@@ -25,7 +25,7 @@ export async function GET() {
 
   for (const p of projects ?? []) {
     if (p.province && p.slug) {
-      urls.push(`${BASE_URL}/du-an/${slugify(p.province)}/${p.slug}`)
+      urls.push(`${BASE_URL}${projectPath(p.province, p.district, p.slug)}`)
     }
   }
   for (const a of agents ?? []) {

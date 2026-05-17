@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
 import Link from 'next/link'
-import { projectUrl } from '@/lib/project-url'
+import { projectPath } from '@/lib/utils/slug'
 
 async function fetchSimilar(province: string, currentId: string) {
   const supabase = await createClient()
@@ -41,7 +41,7 @@ export default async function SimilarSection({
         {projects.map((p) => (
           <Link
             key={p.id}
-            href={projectUrl(p.province, p.slug)}
+            href={projectPath(p.province, p.district, p.slug)}
             className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover:shadow-md transition-shadow"
           >
             <div className="relative h-28 bg-[#F1F5F9]">

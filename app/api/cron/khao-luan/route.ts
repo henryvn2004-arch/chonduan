@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { slugify } from '@/lib/project-url'
+import { projectPath, slugify } from '@/lib/utils/slug'
 import { NextRequest, NextResponse } from 'next/server'
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
@@ -17,18 +17,6 @@ const TAGS = [
   'tai-chinh-mua-nha',
   'du-an-noi-bat',
 ]
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/đ/g, 'd')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .slice(0, 80)
-}
 
 async function pickTag(supabase: Awaited<ReturnType<typeof createClient>>): Promise<string> {
   // Pick the tag with fewest recent articles
@@ -49,10 +37,10 @@ async function pickTag(supabase: Awaited<ReturnType<typeof createClient>>): Prom
 async function fetchRelatedProjects(
   supabase: Awaited<ReturnType<typeof createClient>>,
   tag: string,
-): Promise<Array<{ id: string; name_official: string; province: string; slug: string }>> {
+): Promise<Array<{ id: string; name_official: string; province: string; district: string | null; slug: string }>> {
   const { data } = await supabase
     .from('projects')
-    .select('id, name_official, province, slug')
+    .select('id, name_official, province, district, slug')
     .eq('published', true)
     .order('investment_score', { ascending: false })
     .limit(5)
@@ -61,7 +49,7 @@ async function fetchRelatedProjects(
 
 async function generateArticle(tag: string, relatedProjects: typeof fetchRelatedProjects extends (...args: any[]) => Promise<infer T> ? T : never): Promise<{ title: string; content: string } | null> {
   const projectLinks = relatedProjects
-    .map((p) => `- [${p.name_official}](${BASE_URL}/du-an/${slugify(p.province)}/${p.slug})`)
+    .map((p) => `- [${p.name_official}](${BASE_URL}${projectPath(p.province, p.district, p.slug)})`)
     .join('\n')
 
   const prompt = `Viết một bài khảo luận bất động sản Việt Nam 1200-2000 từ về chủ đề: "${tag.replace(/-/g, ' ')}".
