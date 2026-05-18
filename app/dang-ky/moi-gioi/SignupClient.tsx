@@ -69,6 +69,11 @@ export default function SignupClient() {
       const uid = data.user?.id
       if (!uid) throw new Error('Không lấy được user ID')
       setUserId(uid)
+      // Ensure user_profiles row exists with agent type
+      await supabase.from('user_profiles').upsert(
+        { id: uid, user_type: 'agent' },
+        { onConflict: 'id' }
+      )
       setStep(1)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Lỗi đăng ký')
