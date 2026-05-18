@@ -16,7 +16,16 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error && data.user) {
-      // If an explicit next was given, honour it; otherwise derive from user_type
+      // Ensure user_profiles row exists (safety net — DB trigger handles most cases)
+      await supabase.from('user_profiles').upsert(
+        {
+          id: data.user.id,
+          display_name: data.user.user_metadata?.full_name ?? data.user.user_metadata?.name ?? data.user.email?.split('@')[0],
+          user_type: 'buyer',
+        },
+        { onConflict: 'id', ignoreDuplicates: true }
+      )
+
       if (next) {
         return NextResponse.redirect(`${origin}${next}`)
       }
