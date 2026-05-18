@@ -75,4 +75,5 @@ export interface SearchResult {
   province: string
   lat: number | null
   lng: number | null
+  zoom?: number  // custom zoom level khi fly (mặc định 15)
 }

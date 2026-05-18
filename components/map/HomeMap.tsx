@@ -183,6 +183,8 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
     if (f.rent_2br_min)             params.set('rent_2br_min', String(f.rent_2br_min))
     if (f.rent_2br_max && f.rent_2br_max < 100) params.set('rent_2br_max', String(f.rent_2br_max))
     if (f.rental_yield_pct_min)     params.set('rental_yield_pct_min', String(f.rental_yield_pct_min))
+    if (f.province)                  params.set('province', f.province)
+    if (f.district)                  params.set('district', f.district)
     if (f.developer_search)         params.set('developer_search', f.developer_search)
     if (f.rent_demand_score_min)    params.set('rent_demand_score_min', String(f.rent_demand_score_min))
     if (f.rent_trend)               params.set('rent_trend', f.rent_trend)
@@ -231,7 +233,7 @@ export default function HomeMap({ mode, flyTo, filters, selectedPin, onPinSelect
   // Fly to search result
   useEffect(() => {
     if (!flyTo || !mapReady || !flyTo.lat || !flyTo.lng) return
-    mapRef.current?.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: 15 })
+    mapRef.current?.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: flyTo.zoom ?? 15 })
   }, [flyTo, mapReady])
 
   return (

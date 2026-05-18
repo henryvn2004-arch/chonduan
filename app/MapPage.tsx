@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import Nav from '@/components/nav/Nav'
@@ -8,6 +8,7 @@ import FilterSidebar from '@/components/map/FilterSidebar'
 import ProjectRightPanel from '@/components/map/ProjectRightPanel'
 import ProjectBottomSheet from '@/components/map/ProjectBottomSheet'
 import type { Mode, SearchResult, ProjectPin, FilterState } from '@/types/maps'
+import { PROVINCE_MAP } from '@/lib/data/provinces-districts'
 
 const HomeMap = dynamic(() => import('@/components/map/HomeMap'), { ssr: false })
 
@@ -41,6 +42,19 @@ export default function MapPage() {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false)
 
   const geolocateFnRef = useRef<(() => void) | null>(null)
+  const prevProvinceRef = useRef<string | undefined>(undefined)
+
+  // Fly to province center khi user chọn tỉnh/thành trong filter
+  useEffect(() => {
+    const province = filters.province
+    if (province && province !== prevProvinceRef.current) {
+      const data = PROVINCE_MAP[province]
+      if (data) {
+        setFlyTo({ id: '', name_official: province, slug: '', province, lat: data.lat, lng: data.lng, zoom: 10 })
+      }
+    }
+    prevProvinceRef.current = province
+  }, [filters.province])
 
   const handleGeolocateReady = useCallback((fn: () => void) => {
     geolocateFnRef.current = fn

@@ -82,6 +82,10 @@ export async function GET(req: NextRequest) {
   const rent2brMax         = parseInt(sp.get('rent_2br_max') ?? '0')
   const rentalYieldPctMin  = parseFloat(sp.get('rental_yield_pct_min') ?? '0')
 
+  // ── Location filters ──────────────────────────────────
+  const province           = sp.get('province') ?? ''
+  const district           = sp.get('district') ?? ''
+
   // ── Text search ───────────────────────────────────────
   const developerSearch    = sp.get('developer_search') ?? ''
 
@@ -107,6 +111,9 @@ export async function GET(req: NextRequest) {
     .not('lng', 'is', null)
 
   // ── Filters ───────────────────────────────────────────
+
+  if (province) query = query.eq('province', province)
+  if (district) query = query.eq('district', district)
 
   if (propertyType) query = query.eq('property_type', propertyType)
 
@@ -141,9 +148,21 @@ export async function GET(req: NextRequest) {
   if (rent2brMax > 0 && rent2brMax < 100) query = query.lte('rent_2br_avg_monthly_vnd', rent2brMax * 1_000_000)
   if (rentalYieldPctMin > 0)  query = query.gte('rental_yield_pct', rentalYieldPctMin)
 
-  // Developer text search (ilike on developers table via join not possible here — filter post-fetch or use RPC)
-  // For now: skip developer_search in this endpoint (handled by /api/search)
-  void developerSearch
+  // Developer text search — look up matching developer IDs first
+  if (developerSearch) {
+    const { data: devRows } = await supabase
+      .from('developers')
+      .select('id')
+      .ilike('name', `%${developerSearch}%`)
+      .limit(50)
+    const devIds = (devRows ?? []).map((r: { id: string }) => r.id)
+    if (devIds.length > 0) {
+      query = query.in('developer_id', devIds)
+    } else {
+      // No matching developers — return empty result immediately
+      return NextResponse.json([])
+    }
+  }
 
   if (mode === 'rent_long') {
     if (rentDemandScoreMin > 0) query = query.gte('rent_demand_score', rentDemandScoreMin)

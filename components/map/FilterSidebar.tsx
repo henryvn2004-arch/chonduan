@@ -2,20 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import type { FilterState, Mode } from '@/types/maps'
-
-// ─── Static options ─────────────────────────────────────────────────────────
-
-const PROVINCES = [
-  'TP. Hồ Chí Minh', 'Hà Nội', 'Bình Dương', 'Đồng Nai',
-  'Bà Rịa - Vũng Tàu', 'Long An', 'Đà Nẵng', 'Cần Thơ',
-]
-
-const DISTRICTS_HCM = [
-  'Quận 1', 'Quận 2', 'Quận 3', 'Quận 4', 'Quận 5', 'Quận 6',
-  'Quận 7', 'Quận 8', 'Quận 9', 'Quận 10', 'Quận 11', 'Quận 12',
-  'TP. Thủ Đức', 'Bình Thạnh', 'Gò Vấp', 'Phú Nhuận', 'Tân Bình',
-  'Tân Phú', 'Bình Tân', 'Bình Chánh', 'Hóc Môn', 'Củ Chi', 'Nhà Bè', 'Cần Giờ',
-]
+import { PROVINCES_DATA, PROVINCE_MAP } from '@/lib/data/provinces-districts'
 
 const PROPERTY_TYPES = [
   { value: '',          label: 'Tất cả' },
@@ -329,7 +316,7 @@ export default function FilterSidebar({ mode, filters, onChange, mobile }: Props
                 className="w-full text-[12px] text-[#0D1B3D] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 pr-7 appearance-none focus:outline-none focus:border-[#1565FF] transition-colors cursor-pointer"
               >
                 <option value="">Tất cả tỉnh/thành</option>
-                {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
+                {PROVINCES_DATA.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
               </select>
               <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-[#94A3B8] pointer-events-none"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -344,12 +331,13 @@ export default function FilterSidebar({ mode, filters, onChange, mobile }: Props
             <div className="relative">
               <select
                 value={local.district ?? ''}
+                disabled={!local.province}
                 onChange={e => update({ district: e.target.value || undefined })}
-                className="w-full text-[12px] text-[#0D1B3D] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 pr-7 appearance-none focus:outline-none focus:border-[#1565FF] transition-colors cursor-pointer"
+                className="w-full text-[12px] text-[#0D1B3D] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 pr-7 appearance-none focus:outline-none focus:border-[#1565FF] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <option value="">Tất cả quận/huyện</option>
-                {(local.province === 'TP. Hồ Chí Minh' || !local.province
-                  ? DISTRICTS_HCM : []).map(d => <option key={d} value={d}>{d}</option>)}
+                <option value="">{local.province ? 'Tất cả quận/huyện' : 'Chọn tỉnh/thành trước'}</option>
+                {(local.province ? (PROVINCE_MAP[local.province]?.districts ?? []) : [])
+                  .map(d => <option key={d} value={d}>{d}</option>)}
               </select>
               <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-[#94A3B8] pointer-events-none"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
