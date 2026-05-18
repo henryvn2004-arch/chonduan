@@ -389,6 +389,19 @@ const DEFAULT_FILTERS: FilterState = {
 
 export default function FilterSidebar({ mode, filters, onChange, mobile }: Props) {
   const [local, setLocal] = useState<FilterState>(filters)
+  const [provinceCounts, setProvinceCounts] = useState<Record<string, number>>({})
+  const [districtCounts, setDistrictCounts] = useState<Record<string, Record<string, number>>>({})
+
+  useEffect(() => {
+    fetch('/api/projects/counts')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d) return
+        setProvinceCounts(d.provinces ?? {})
+        setDistrictCounts(d.districts ?? {})
+      })
+      .catch(() => {})
+  }, [])
 
   const update = useCallback((patch: Partial<FilterState>) => {
     const next = { ...local, ...patch }
@@ -458,7 +471,14 @@ export default function FilterSidebar({ mode, filters, onChange, mobile }: Props
                 className="w-full text-[12px] text-[#0D1B3D] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 pr-7 appearance-none focus:outline-none focus:border-[#1565FF] transition-colors cursor-pointer"
               >
                 <option value="">Tất cả tỉnh/thành</option>
-                {PROVINCES_DATA.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                {PROVINCES_DATA.map(p => {
+                  const cnt = provinceCounts[p.name]
+                  return (
+                    <option key={p.name} value={p.name}>
+                      {p.name}{cnt != null ? ` (${cnt})` : ''}
+                    </option>
+                  )
+                })}
               </select>
               <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-[#94A3B8] pointer-events-none"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -479,7 +499,14 @@ export default function FilterSidebar({ mode, filters, onChange, mobile }: Props
               >
                 <option value="">{local.province ? 'Tất cả quận/huyện' : 'Chọn tỉnh/thành trước'}</option>
                 {(local.province ? (PROVINCE_MAP[local.province]?.districts ?? []) : [])
-                  .map(d => <option key={d} value={d}>{d}</option>)}
+                  .map(d => {
+                    const cnt = local.province ? districtCounts[local.province]?.[d] : undefined
+                    return (
+                      <option key={d} value={d}>
+                        {d}{cnt != null ? ` (${cnt})` : ''}
+                      </option>
+                    )
+                  })}
               </select>
               <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-[#94A3B8] pointer-events-none"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
