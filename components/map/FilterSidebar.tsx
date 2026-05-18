@@ -1,8 +1,150 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import type { FilterState, Mode } from '@/types/maps'
 import { PROVINCES_DATA, PROVINCE_MAP } from '@/lib/data/provinces-districts'
+
+// ─── Developer autocomplete ──────────────────────────────────────────────────
+
+interface DeveloperOption {
+  id: string
+  name: string
+  short_name: string | null
+  logo_url: string | null
+  total_projects_count: number
+}
+
+function DeveloperSearch({
+  value, displayName, onChange,
+}: {
+  value: string | undefined        // developer_id
+  displayName: string | undefined  // developer_search (text)
+  onChange: (id: string | undefined, name: string | undefined) => void
+}) {
+  const [query, setQuery] = useState(displayName ?? '')
+  const [options, setOptions] = useState<DeveloperOption[]>([])
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+
+  // Đóng dropdown khi click ngoài
+  useEffect(() => {
+    function onDown(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [])
+
+  // Sync lại khi filter bị clear từ ngoài
+  useEffect(() => {
+    if (!value && !displayName) setQuery('')
+  }, [value, displayName])
+
+  function handleInput(q: string) {
+    setQuery(q)
+    // Nếu đang có developer được chọn mà user xóa → clear selection
+    if (value) onChange(undefined, undefined)
+
+    if (timerRef.current) clearTimeout(timerRef.current)
+    if (q.trim().length < 1) { setOptions([]); setOpen(false); return }
+
+    timerRef.current = setTimeout(async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`/api/developers/search?q=${encodeURIComponent(q)}`)
+        if (res.ok) {
+          const data: DeveloperOption[] = await res.json()
+          setOptions(data)
+          setOpen(data.length > 0)
+        }
+      } finally {
+        setLoading(false)
+      }
+    }, 300)
+  }
+
+  function select(dev: DeveloperOption) {
+    setQuery(dev.name)
+    setOpen(false)
+    onChange(dev.id, dev.name)
+  }
+
+  function clear() {
+    setQuery('')
+    setOpen(false)
+    onChange(undefined, undefined)
+  }
+
+  return (
+    <div ref={wrapperRef} className="relative">
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Tìm chủ đầu tư..."
+          value={query}
+          onChange={e => handleInput(e.target.value)}
+          onFocus={() => { if (options.length > 0 && !value) setOpen(true) }}
+          className="w-full text-[12px] text-[#0D1B3D] placeholder-[#94A3B8] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 pr-14 focus:outline-none focus:border-[#1565FF] transition-colors"
+        />
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          {loading && (
+            <div className="w-3 h-3 border border-[#1565FF] border-t-transparent rounded-full animate-spin" />
+          )}
+          {(query || value) && !loading && (
+            <button onClick={clear} className="text-[#94A3B8] hover:text-[#64748B] transition-colors">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Chip khi đã chọn */}
+      {value && (
+        <div className="mt-1 flex items-center gap-1.5 bg-[#EFF6FF] border border-[#BFDBFE] rounded-lg px-2 py-1">
+          <svg className="w-3 h-3 text-[#1565FF] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="text-[11px] text-[#1565FF] font-medium truncate">{displayName}</span>
+        </div>
+      )}
+
+      {/* Dropdown suggestions */}
+      {open && (
+        <div className="absolute z-50 top-full mt-1 left-0 right-0 bg-white border border-[#E2E8F0] rounded-lg shadow-lg overflow-hidden max-h-48 overflow-y-auto">
+          {options.map(dev => (
+            <button
+              key={dev.id}
+              onMouseDown={e => { e.preventDefault(); select(dev) }}
+              className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#F8FAFC] transition-colors text-left"
+            >
+              {dev.logo_url ? (
+                <img src={dev.logo_url} alt="" className="w-6 h-6 rounded object-contain shrink-0 bg-white border border-[#E2E8F0]" />
+              ) : (
+                <div className="w-6 h-6 rounded bg-[#E2E8F0] shrink-0 flex items-center justify-center">
+                  <svg className="w-3.5 h-3.5 text-[#94A3B8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] text-[#0D1B3D] font-medium truncate">{dev.name}</p>
+                {dev.total_projects_count > 0 && (
+                  <p className="text-[10px] text-[#94A3B8]">{dev.total_projects_count} dự án</p>
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 const PROPERTY_TYPES = [
   { value: '',          label: 'Tất cả' },
@@ -274,7 +416,7 @@ export default function FilterSidebar({ mode, filters, onChange, mobile }: Props
     || (local.ownership_terms?.length ?? 0) > 0
     || amenities.length > 0
     || !!local.rent_2br_min || !!local.rental_yield_pct_min
-    || !!local.developer_search || !!local.year_handover_max
+    || !!local.developer_id || !!local.developer_search || !!local.year_handover_max
     || !!local.province || !!local.district
 
   return (
@@ -456,12 +598,10 @@ export default function FilterSidebar({ mode, filters, onChange, mobile }: Props
         <FilterSection title="Thông tin khác">
           <div>
             <SectionLabel>Chủ đầu tư</SectionLabel>
-            <input
-              type="text"
-              placeholder="Tìm chủ đầu tư..."
-              value={local.developer_search ?? ''}
-              onChange={e => update({ developer_search: e.target.value || undefined })}
-              className="w-full text-[12px] text-[#0D1B3D] placeholder-[#94A3B8] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#1565FF] transition-colors"
+            <DeveloperSearch
+              value={local.developer_id}
+              displayName={local.developer_search}
+              onChange={(id, name) => update({ developer_id: id, developer_search: name })}
             />
           </div>
           <div>

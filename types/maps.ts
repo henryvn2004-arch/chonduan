@@ -51,7 +51,8 @@ export interface FilterState {
   birth_year?: number            // dùng tính can chi hợp mệnh
 
   // Nâng cao
-  developer_search?: string
+  developer_id?: string      // ID chính xác sau khi chọn từ dropdown
+  developer_search?: string  // text hiển thị trong input
   year_handover_max?: number
   investment_score_min?: number  // 1-10
   bql_rating_min?: number        // 0-5

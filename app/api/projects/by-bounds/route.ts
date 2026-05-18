@@ -87,6 +87,7 @@ export async function GET(req: NextRequest) {
   const district           = sp.get('district') ?? ''
 
   // ── Text search ───────────────────────────────────────
+  const developerId        = sp.get('developer_id') ?? ''
   const developerSearch    = sp.get('developer_search') ?? ''
 
   // ── Rent-mode params ──────────────────────────────────
@@ -148,8 +149,10 @@ export async function GET(req: NextRequest) {
   if (rent2brMax > 0 && rent2brMax < 100) query = query.lte('rent_2br_avg_monthly_vnd', rent2brMax * 1_000_000)
   if (rentalYieldPctMin > 0)  query = query.gte('rental_yield_pct', rentalYieldPctMin)
 
-  // Developer text search — look up matching developer IDs first
-  if (developerSearch) {
+  // Developer filter — ưu tiên ID chính xác, fallback sang ilike text search
+  if (developerId) {
+    query = query.eq('developer_id', developerId)
+  } else if (developerSearch) {
     const { data: devRows } = await supabase
       .from('developers')
       .select('id')
@@ -159,7 +162,6 @@ export async function GET(req: NextRequest) {
     if (devIds.length > 0) {
       query = query.in('developer_id', devIds)
     } else {
-      // No matching developers — return empty result immediately
       return NextResponse.json([])
     }
   }
