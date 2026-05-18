@@ -4,15 +4,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useTransition } from 'react'
 import type { FilterState, Mode } from '@/types/maps'
 
-const PROPERTY_TYPES = [
-  { value: '', label: 'Tất cả loại hình' },
-  { value: 'chung_cu', label: 'Chung cư' },
-  { value: 'biet_thu', label: 'Biệt thự' },
-  { value: 'lien_ke', label: 'Liền kề' },
-  { value: 'shophouse', label: 'Shophouse' },
-  { value: 'dat_nen', label: 'Đất nền' },
-  { value: 'officetel', label: 'Officetel' },
-]
+import { PROPERTY_TYPES as PT } from '@/lib/data/property-types'
+const PROPERTY_TYPES = [{ value: '', label: 'Tất cả loại hình' }, ...PT]
 
 const STATUSES = [
   { value: '', label: 'Tất cả trạng thái' },

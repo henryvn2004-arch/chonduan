@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import GeocodeBatchButton from './GeocodeBatchButton'
+import OsmScrapeButton from './OsmScrapeButton'
 
 const DATA_QUALITY_LABEL: Record<string, string> = {
   auto: 'Auto',
@@ -39,6 +40,7 @@ export default async function AdminProjectListPage() {
           <Link href="/dashboard/admin/kyc" className="text-sm text-[#64748B] hover:text-[#0D1B3D]">KYC</Link>
           <Link href="/dashboard/admin/leads" className="text-sm text-[#64748B] hover:text-[#0D1B3D]">Leads</Link>
           <GeocodeBatchButton />
+          <OsmScrapeButton />
           <LogoutButton />
         </div>
       </header>

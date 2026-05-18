@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import type { FilterState, Mode } from '@/types/maps'
 import { PROVINCES_DATA, PROVINCE_MAP } from '@/lib/data/provinces-districts'
+import { PROPERTY_TYPES } from '@/lib/data/property-types'
 
 // ─── Developer autocomplete ──────────────────────────────────────────────────
 
@@ -146,15 +147,9 @@ function DeveloperSearch({
   )
 }
 
-const PROPERTY_TYPES = [
-  { value: '',          label: 'Tất cả' },
-  { value: 'chung_cu',  label: 'Chung cư' },
-  { value: 'biet_thu',  label: 'Biệt thự' },
-  { value: 'lien_ke',   label: 'Liền kề' },
-  { value: 'shophouse', label: 'Shophouse' },
-  { value: 'dat_nen',   label: 'Đất nền' },
-  { value: 'officetel', label: 'Officetel' },
-  { value: 'condotel',  label: 'Condotel' },
+const PROPERTY_TYPE_OPTIONS = [
+  { value: '', label: 'Tất cả' },
+  ...PROPERTY_TYPES,
 ]
 
 const STATUSES = [
@@ -524,7 +519,7 @@ export default function FilterSidebar({ mode, filters, onChange, mobile }: Props
                 onChange={e => update({ property_type: e.target.value })}
                 className="w-full text-[12px] text-[#0D1B3D] bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 pr-7 appearance-none focus:outline-none focus:border-[#1565FF] transition-colors cursor-pointer"
               >
-                {PROPERTY_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                {PROPERTY_TYPE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
               <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-[#94A3B8] pointer-events-none"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

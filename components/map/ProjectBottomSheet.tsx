@@ -3,16 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import type { ProjectPin, Mode } from '@/types/maps'
-
-const PROPERTY_TYPE_LABEL: Record<string, string> = {
-  chung_cu: 'Chung cư',
-  biet_thu: 'Biệt thự',
-  lien_ke: 'Liền kề',
-  shophouse: 'Shophouse',
-  dat_nen: 'Đất nền',
-  officetel: 'Officetel',
-  condotel: 'Condotel',
-}
+import { PROPERTY_TYPE_LABEL } from '@/lib/data/property-types'
 
 const TIER_LABEL: Record<string, string> = {
   binh_dan: 'Bình dân',

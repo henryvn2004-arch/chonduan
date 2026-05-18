@@ -13,8 +13,16 @@ create extension if not exists "pg_trgm";  -- fuzzy text search
 -- =====================================================================
 
 create type property_type as enum (
-  'chung_cu', 'biet_thu', 'lien_ke', 'shophouse',
-  'dat_nen', 'officetel', 'condotel'
+  -- Nhà ở
+  'chung_cu', 'biet_thu', 'lien_ke', 'shophouse', 'dat_nen', 'nha_o_xa_hoi',
+  -- Mixed-use
+  'officetel', 'condotel', 'khu_nghi_duong',
+  -- Thương mại / Văn phòng
+  'van_phong',
+  -- Công nghiệp
+  'nha_xuong_cn', 'khu_cong_nghiep',
+  -- Đất
+  'dat_nong_nghiep', 'dat_rung'
 );
 
 create type project_tier as enum (

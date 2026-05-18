@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { ProjectPin, Mode, ProjectStatus } from '@/types/maps'
+import { PROPERTY_TYPE_LABEL } from '@/lib/data/property-types'
 
 const STATUS_CONFIG: Record<ProjectStatus, { label: string; color: string }> = {
   sap_mo_ban: { label: 'Sắp mở bán', color: 'bg-[#FFF7ED] text-[#C2410C]' },
@@ -13,16 +14,6 @@ const STATUS_CONFIG: Record<ProjectStatus, { label: string; color: string }> = {
   da_ban_giao_lau: { label: 'Đã bàn giao (lâu)', color: 'bg-[#F8FAFC] text-[#64748B]' },
 }
 
-const PROPERTY_TYPE_LABEL: Record<string, string> = {
-  chung_cu: 'Chung cư',
-  biet_thu: 'Biệt thự',
-  lien_ke: 'Liền kề',
-  shophouse: 'Shophouse',
-  dat_nen: 'Đất nền',
-  officetel: 'Officetel',
-  condotel: 'Condotel',
-  khu_do_thi: 'Khu đô thị',
-}
 
 function fmtSale(pin: ProjectPin) {
   const val = pin.price_secondary_per_m2_avg ?? pin.price_primary_per_m2_min
