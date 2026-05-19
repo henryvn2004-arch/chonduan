@@ -302,6 +302,11 @@ export async function GET(req: Request) {
         // Write field_sources JSONB. On first enrichment field_sources is null,
         // so overwrite is fine. TODO: merge with existing when re-enriching
         // (admin-verified fields shouldn't be clobbered).
+        //
+        // Auto-publish sau enrich thành công. Safety net:
+        // - UI có badge "Ước tính" cho field 'gemini_estimated' / 'proxy_median_peers'
+        // - data_quality='estimated' vẫn published, badge minh bạch tránh hiểu lầm
+        // - Gemini không tìm thấy → status='skipped' (route khác), KHÔNG đụng publish ở đây
         const { error: updErr } = await supabase
           .from('projects')
           .update({
@@ -311,9 +316,7 @@ export async function GET(req: Request) {
             enrichment_completed_at: new Date().toISOString(),
             enrichment_last_error: null,
             enrichment_provider: 'gemini-2.5-flash',
-            // NOTE: not auto-publishing. Admin reviews enriched rows then flips
-            // published=true (or we add a separate cron later that auto-publishes
-            // rows with confidence_level='high').
+            published: true,
           })
           .eq('id', claim.id)
 

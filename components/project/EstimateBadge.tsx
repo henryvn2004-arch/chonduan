@@ -10,7 +10,6 @@
 // CSS-only tooltip (group-hover) — không phụ thuộc Radix/Headless. Khi mobile
 // (no hover), user có thể tap vào icon để open tooltip native title attribute.
 
-import { Info } from 'lucide-react'
 import { explainEstimateKind, type EstimateKind } from '@/lib/enrich/field-source'
 
 interface Props {
@@ -38,6 +37,14 @@ const KIND_LABEL: Record<EstimateKind, string> = {
   unknown:   '',
 }
 
+// Coloured emoji icon thay cho lucide line-icon, match brand style và universal AI convention.
+const KIND_ICON: Record<EstimateKind, string> = {
+  grounded:  '✅',
+  estimated: '✨', // AI-generated convention
+  proxy:     '📊', // statistical estimate
+  unknown:   '',
+}
+
 export default function EstimateBadge({
   kind,
   field,
@@ -50,11 +57,11 @@ export default function EstimateBadge({
 
   return (
     <span
-      className={`group/badge relative inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border text-[10px] font-medium leading-none whitespace-nowrap ${KIND_STYLES[kind]}`}
+      className={`group/badge relative inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[10px] font-medium leading-none whitespace-nowrap ${KIND_STYLES[kind]}`}
       title={tooltip}
       aria-label={field ? `${text}: ${tooltip} (${field})` : `${text}: ${tooltip}`}
     >
-      <Info className="w-2.5 h-2.5" strokeWidth={2.5} aria-hidden="true" />
+      <span className="text-[10px] leading-none" aria-hidden="true">{KIND_ICON[kind]}</span>
       <span>{text}</span>
       {/* CSS hover tooltip — desktop. Mobile dùng native title attr. */}
       <span

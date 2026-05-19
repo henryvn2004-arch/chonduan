@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/resolve-bids",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/gemini-enrich",
+      "schedule": "*/2 * * * *"
     }
   ],
   "functions": {
