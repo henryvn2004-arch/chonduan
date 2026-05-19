@@ -48,15 +48,21 @@ export async function computeProxyEstimates(
   candidates.push({ province: ctx.province })
 
   for (const filter of candidates) {
+    // Supabase JS doesn't statically type runtime select strings — the result
+    // type widens to GenericStringError | T[]. Cast via unknown to break the
+    // structural overlap check (TS error: "may be a mistake because neither
+    // type sufficiently overlaps").
     let q = supabase.from('projects').select(PROXY_FIELDS.join(','))
     for (const [k, v] of Object.entries(filter)) q = q.eq(k, v)
-    const { data, error } = await q.limit(500)
-    if (error || !data || data.length < 3) continue
+    const res = await q.limit(500)
+    if (res.error) continue
+    const rows = (res.data ?? []) as unknown as Array<Record<string, number | null>>
+    if (rows.length < 3) continue
 
     const result: ProxyEstimates = {}
     let filledAny = false
     for (const f of PROXY_FIELDS) {
-      const vals = (data as Record<string, number | null>[])
+      const vals = rows
         .map(r => r[f])
         .filter((v): v is number => typeof v === 'number' && v > 0)
       if (vals.length >= 3) {
