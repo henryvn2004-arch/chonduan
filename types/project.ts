@@ -1,8 +1,11 @@
+import type { FieldSources } from '@/lib/enrich/field-source'
+
 export type ProjectTier = 'binh_dan' | 'trung_cap' | 'cao_cap' | 'hang_sang'
 export type ProjectStatus = 'sap_mo_ban' | 'dang_mo_ban' | 'dang_xay' | 'da_ban_giao' | 'da_ban_giao_lau'
 export type LegalStatus = 'da_co' | 'dang_cho' | 'chua_ro' | 'co_van_de'
 export type RiskLevel = 'thap' | 'trung_binh' | 'cao'
 export type PriceTrend = 'tang' | 'giam' | 'on_dinh'
+export type DataQualityLevel = 'auto' | 'estimated' | 'ai_filled' | 'verified' | 'gold'
 
 export interface Developer {
   id: string
@@ -165,6 +168,10 @@ export interface ProjectDetail {
   ai_overview: string | null
   ai_pros_cons: { pros: string[]; cons: string[] } | null
   ai_audio_url: string | null
+
+  // Data provenance (Gemini Flash enrich)
+  data_quality: DataQualityLevel | null
+  field_sources: FieldSources | null
 
   // History (joined)
   price_history: PriceHistory[]

@@ -61,6 +61,7 @@ async function fetchProject(province: string, slug: string): Promise<ProjectDeta
       main_direction, compatible_can_chi, incompatible_can_chi, fengshui_notes,
       review_count, review_avg_rating, review_pros_summary, review_cons_summary,
       ai_faq, ai_overview, ai_pros_cons, ai_audio_url,
+      data_quality, field_sources,
       developers ( id, slug, name, short_name, logo_url, website, founded_year, ranking_tier )
     `)
     .eq('slug', slug)

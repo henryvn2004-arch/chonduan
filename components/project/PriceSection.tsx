@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Home, Key } from 'lucide-react'
 import type { ProjectDetail } from '@/types/project'
 import SparkLine from './SparkLine'
+import EstimateBadge from './EstimateBadge'
+import { getEstimateKind } from '@/lib/enrich/field-source'
 
 function fmt(n: number | null, suffix = '') {
   if (!n) return '—'
@@ -34,6 +36,19 @@ export default function PriceSection({ project, initialMode }: Props) {
   const salePriceHistory = project.price_history.map((h) => h.price_per_m2_avg)
   const rentHistory = project.rental_history.map((h) => h.rent_2br_avg ?? h.rent_1br_avg ?? 0).filter(Boolean)
 
+  // Provenance per price/rent field — render badge if not grounded fact.
+  const fs = project.field_sources
+  const kind = {
+    price_primary_per_m2_min:    getEstimateKind(fs, 'price_primary_per_m2_min'),
+    price_primary_per_m2_max:    getEstimateKind(fs, 'price_primary_per_m2_max'),
+    price_secondary_per_m2_avg:  getEstimateKind(fs, 'price_secondary_per_m2_avg'),
+    rent_studio_avg_monthly_vnd: getEstimateKind(fs, 'rent_studio_avg_monthly_vnd'),
+    rent_1br_avg_monthly_vnd:    getEstimateKind(fs, 'rent_1br_avg_monthly_vnd'),
+    rent_2br_avg_monthly_vnd:    getEstimateKind(fs, 'rent_2br_avg_monthly_vnd'),
+    rent_3br_avg_monthly_vnd:    getEstimateKind(fs, 'rent_3br_avg_monthly_vnd'),
+    rent_4br_plus_avg_monthly_vnd: getEstimateKind(fs, 'rent_4br_plus_avg_monthly_vnd'),
+  } as const
+
   return (
     <section id="gia" className="scroll-mt-28">
       <div className="flex items-center justify-between mb-4">
@@ -62,15 +77,24 @@ export default function PriceSection({ project, initialMode }: Props) {
           {/* Price cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div className="p-4 bg-white rounded-xl border border-[#E2E8F0]">
-              <div className="text-xs text-[#64748B] mb-1">Sơ cấp từ</div>
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-xs text-[#64748B]">Sơ cấp từ</span>
+                <EstimateBadge kind={kind.price_primary_per_m2_min} field="price_primary_per_m2_min" />
+              </div>
               <div className="text-xl font-bold text-[#0D1B3D]">{fmtM2(project.price_primary_per_m2_min)}</div>
             </div>
             <div className="p-4 bg-white rounded-xl border border-[#E2E8F0]">
-              <div className="text-xs text-[#64748B] mb-1">Sơ cấp đến</div>
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-xs text-[#64748B]">Sơ cấp đến</span>
+                <EstimateBadge kind={kind.price_primary_per_m2_max} field="price_primary_per_m2_max" />
+              </div>
               <div className="text-xl font-bold text-[#0D1B3D]">{fmtM2(project.price_primary_per_m2_max)}</div>
             </div>
             <div className="p-4 bg-white rounded-xl border border-[#E2E8F0]">
-              <div className="text-xs text-[#64748B] mb-1">Thứ cấp TB</div>
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-xs text-[#64748B]">Thứ cấp TB</span>
+                <EstimateBadge kind={kind.price_secondary_per_m2_avg} field="price_secondary_per_m2_avg" />
+              </div>
               <div className="text-xl font-bold text-[#0D1B3D]">{fmtM2(project.price_secondary_per_m2_avg)}</div>
               {project.price_trend && (
                 <div className={`text-xs font-medium mt-1 ${TREND_COLOR[project.price_trend]}`}>
@@ -114,16 +138,21 @@ export default function PriceSection({ project, initialMode }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  ['Studio', project.rent_studio_avg_monthly_vnd],
-                  ['1 phòng ngủ', project.rent_1br_avg_monthly_vnd],
-                  ['2 phòng ngủ', project.rent_2br_avg_monthly_vnd],
-                  ['3 phòng ngủ', project.rent_3br_avg_monthly_vnd],
-                  ['4 PN+', project.rent_4br_plus_avg_monthly_vnd],
-                ].map(([label, val]) => (val ? (
-                  <tr key={String(label)} className="border-t border-[#F1F5F9]">
-                    <td className="px-4 py-3 text-[#0D1B3D]">{String(label)}</td>
-                    <td className="px-4 py-3 text-right font-semibold text-[#0D1B3D]">{fmtMonth(val as number)}</td>
+                {([
+                  ['Studio',       'rent_studio_avg_monthly_vnd',    project.rent_studio_avg_monthly_vnd],
+                  ['1 phòng ngủ',  'rent_1br_avg_monthly_vnd',       project.rent_1br_avg_monthly_vnd],
+                  ['2 phòng ngủ',  'rent_2br_avg_monthly_vnd',       project.rent_2br_avg_monthly_vnd],
+                  ['3 phòng ngủ',  'rent_3br_avg_monthly_vnd',       project.rent_3br_avg_monthly_vnd],
+                  ['4 PN+',        'rent_4br_plus_avg_monthly_vnd',  project.rent_4br_plus_avg_monthly_vnd],
+                ] as const).map(([label, fieldKey, val]) => (val ? (
+                  <tr key={fieldKey} className="border-t border-[#F1F5F9]">
+                    <td className="px-4 py-3 text-[#0D1B3D]">
+                      <span className="inline-flex items-center gap-1.5">
+                        {label}
+                        <EstimateBadge kind={kind[fieldKey as keyof typeof kind]} field={fieldKey} />
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right font-semibold text-[#0D1B3D]">{fmtMonth(val)}</td>
                   </tr>
                 ) : null))}
               </tbody>
