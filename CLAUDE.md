@@ -21,7 +21,7 @@
 | Embeddings | OpenAI `text-embedding-3-small` 1024d |
 | TTS | Vbee |
 | Payments | PayPal + payOS |
-| Scraper | Python + Playwright + Railway (service riêng) |
+| Data enrich | **Gemini 2.5 Flash + grounding** (Vercel Cron, không scraper truyền thống) |
 | Styling | Tailwind CSS + shadcn/ui |
 
 ## Transaction Modes
@@ -132,6 +132,18 @@ app/
 - Agent gate: `kyc_status = 'approved'` trong `agents`
 - RLS policies đã setup trong schema — luôn verify khi viết query server-side
 
+### Gemini Flash Enrich (S08/S09/S10 replacement)
+- Model: `gemini-2.5-flash` với Google Search grounding (built-in tool)
+- API: native fetch (per Claude API rule), key rotation 3 free-tier keys (~750 RPD)
+- Pipeline: Vercel Cron `*/2 * * * *` → `/api/cron/gemini-enrich` (300s timeout)
+  - Claim 5 dự án/batch qua DB function `claim_enrichment_batch()` (`FOR UPDATE SKIP LOCKED`)
+  - 3 batch/tick = 15 dự án/2 phút → ~23 giờ xong 10.5k dự án
+- Queue cột trên `projects`: `enrichment_status` enum (`pending`/`processing`/`enriched`/`failed`/`skipped`)
+- Output JSON structured, per-field provenance ghi vào `field_sources` JSONB
+- `data_quality` enum mở rộng: `auto` → `estimated` → `ai_filled` → `verified` → `gold`
+- Estimate fallback (median peer trong cùng tỉnh+tier+property_type) cho giá/rent khi Gemini ra null
+- Cost: $0 (free tier 250 RPD × 3 keys, batch 5 dự án/prompt)
+
 ### SEO
 - URL: `/du-an/[province]/[slug]` — province trong URL là bắt buộc
 - Schema.org `RealEstateListing` cho project pages
@@ -156,9 +168,9 @@ Mày nói: **"Sprint S01"** → tao đọc `sprints/S01.md` + `CLAUDE.md` → b�
 | **S05** | Project hub page (14 sections) | ✅ |
 | **S06** | Search API + filter sidebar | ✅ |
 | **S07** | Agent signup + KYC + profile page | ✅ |
-| **S08** | Scraper sale (Cafef + Batdongsan) | ✅ |
-| **S09** | Scraper rental (Chotot + BDS thuê) | ✅ |
-| **S10** | AI fill (descriptions + FAQ + embed) | 🔄 |
+| **S08** | ~~Scraper sale (Cafef + Batdongsan)~~ | ❌ obsolete — Cafef nghèo data, BDS chặn Cloudflare → bỏ |
+| **S09** | ~~Scraper rental (Chotot + BDS thuê)~~ | ❌ obsolete — chuyển sang Gemini Flash enrich |
+| **S10** | ~~AI fill (descriptions + FAQ + embed)~~ | ❌ dropped — merged vào pipeline Gemini Flash enrich |
 
 Chi tiết từng sprint: `sprints/SXX.md`
 
