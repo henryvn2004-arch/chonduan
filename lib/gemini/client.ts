@@ -108,7 +108,9 @@ async function callOnce(key: string, opts: CallOptions): Promise<{ text: string;
     generationConfig: {
       temperature: 0.3,
       topP: 0.9,
-      maxOutputTokens: 8192,
+      // Batch 5 dự án × ~1.5k tokens output = ~7.5k. Bump to 32k để có headroom
+      // tránh "Non-JSON output: ..." vì truncate. Flash-Lite supports up to 64k.
+      maxOutputTokens: 32768,
     },
   }
   if (opts.grounding !== false) {

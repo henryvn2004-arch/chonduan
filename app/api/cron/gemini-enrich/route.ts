@@ -60,6 +60,8 @@ interface MappedUpdate {
   sources: Record<string, { source: string; confidence: number; ts: string }>
 }
 
+// Chỉ list các DB columns thực sự tồn tại trên projects.
+// `legal_status` KHÔNG có (DB dùng `legal_issues_text` + `legal_score` + `red_book_status`).
 const SCALAR_COPY: Array<keyof EnrichedProjectData> = [
   'description_short',
   'description_long',
@@ -70,7 +72,6 @@ const SCALAR_COPY: Array<keyof EnrichedProjectData> = [
   'total_land_ha',
   'building_density_pct',
   'green_density_pct',
-  'legal_status',
   'ownership_term',
   'red_book_status',
   'price_primary_per_m2_min',
@@ -117,6 +118,17 @@ function mapEnrichmentToUpdate(p: EnrichedProject, sourcesFromGrounding: string[
     sources[field as string] = {
       source: estimates.includes(field as string) ? 'gemini_estimated' : 'gemini_grounded',
       confidence: confidenceFor(field as string, estimates, baseConf),
+      ts,
+    }
+  }
+
+  // Map legal_status (Gemini output, free text) → legal_issues_text (DB column).
+  // DB không có legal_status column riêng — dùng text column này.
+  if (data.legal_status && typeof data.legal_status === 'string') {
+    set.legal_issues_text = data.legal_status
+    sources.legal_issues_text = {
+      source: estimates.includes('legal_status') ? 'gemini_estimated' : 'gemini_grounded',
+      confidence: confidenceFor('legal_status', estimates, baseConf),
       ts,
     }
   }
