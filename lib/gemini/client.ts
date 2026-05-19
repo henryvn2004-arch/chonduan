@@ -5,13 +5,14 @@
 //  - Per-request retry with exponential backoff on 429/5xx
 //  - Google Search grounding tool enabled
 //
-// Note on rate limits (Gemini 2.5 Flash free tier, 2026):
-//   ~10 RPM, 250 RPD, 250k TPM per key.
-//   With key rotation we get ~30 RPM / 750 RPD across 3 keys.
+// Rate limits (free tier, VN region, verified 2026-05-19):
+//   gemini-2.5-flash      : Free tier chỉ 20 RPD/key  (quá ít cho 10k dự án)
+//   gemini-2.5-flash-lite : Free tier ~1000 RPD/key ✓ default choice
+//   Override: set GEMINI_MODEL=gemini-2.5-flash trên Vercel env nếu mày paid Tier 1.
 
 import type { GeminiBatchOutput } from './types'
 
-const MODEL = 'gemini-2.5-flash'
+const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite'
 const ENDPOINT = (key: string) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${key}`
 
@@ -31,7 +32,9 @@ function loadKeys(): string[] {
 let _cursor = 0
 const _usage = new Map<string, { count: number; lastReset: number }>()
 
-const DAILY_BUDGET_PER_KEY = Number(process.env.GEMINI_RPD_PER_KEY ?? 240) // leave headroom under 250
+// Default: 950 — leave headroom under flash-lite free tier 1000 RPD.
+// For paid Tier 1 set GEMINI_RPD_PER_KEY=10000.
+const DAILY_BUDGET_PER_KEY = Number(process.env.GEMINI_RPD_PER_KEY ?? 950)
 const RESET_MS = 24 * 60 * 60 * 1000
 
 function pickKey(): string | null {
