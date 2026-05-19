@@ -121,14 +121,32 @@ function mapEnrichmentToUpdate(p: EnrichedProject, sourcesFromGrounding: string[
     }
   }
 
-  // Status enum: normalize → matches projects.status if compatible. Skip 'unknown'.
+  // Status enum: map English fallback → VN enum + validate.
+  // DB enum project_status: sap_mo_ban | dang_mo_ban | dang_xay | da_ban_giao | da_ban_giao_lau
+  // Safety net: nếu Gemini vẫn trả English (planning/construction/...) thì map sang VN.
+  const STATUS_MAP: Record<string, string> = {
+    sap_mo_ban: 'sap_mo_ban',
+    dang_mo_ban: 'dang_mo_ban',
+    dang_xay: 'dang_xay',
+    da_ban_giao: 'da_ban_giao',
+    da_ban_giao_lau: 'da_ban_giao_lau',
+    // English fallback (Gemini đôi khi ignore prompt enum)
+    planning: 'sap_mo_ban',
+    construction: 'dang_xay',
+    handover: 'da_ban_giao',
+    completed: 'da_ban_giao_lau',
+  }
   if (data.status && data.status !== 'unknown') {
-    set.status = data.status
-    sources.status = {
-      source: estimates.includes('status') ? 'gemini_estimated' : 'gemini_grounded',
-      confidence: confidenceFor('status', estimates, baseConf),
-      ts,
+    const mapped = STATUS_MAP[data.status]
+    if (mapped) {
+      set.status = mapped
+      sources.status = {
+        source: estimates.includes('status') ? 'gemini_estimated' : 'gemini_grounded',
+        confidence: confidenceFor('status', estimates, baseConf),
+        ts,
+      }
     }
+    // Nếu không map được, skip — đừng để DB UPDATE fail vì 1 enum xấu.
   }
 
   // Amenities array → boolean columns.

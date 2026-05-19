@@ -59,7 +59,7 @@ OUTPUT SCHEMA (trả về JSON đúng theo cấu trúc này, không thêm markdo
         "total_land_ha": 12.5,
         "building_density_pct": 35,
         "green_density_pct": 55,
-        "status": "planning" | "construction" | "handover" | "completed" | "unknown",
+        "status": "sap_mo_ban" | "dang_mo_ban" | "dang_xay" | "da_ban_giao" | "da_ban_giao_lau" | "unknown",
         "legal_status": "Đã có sổ đỏ/hồng | Chờ cấp sổ | Pháp lý đầy đủ | ...",
         "ownership_term": "Lâu dài | 50 năm | 70 năm",
         "red_book_status": "đã cấp | đang chờ | n/a",
@@ -83,6 +83,14 @@ OUTPUT SCHEMA (trả về JSON đúng theo cấu trúc này, không thêm markdo
 
 AMENITIES CLOSED LIST (chỉ dùng các giá trị này, không tự nghĩ):
 pool, gym, tennis_court, basketball_court, kid_playground, kindergarten, school_primary, school_secondary, school_international, mall_internal, supermarket_internal, cafe_restaurant, bbq_area, clubhouse, library, park_garden, 24h_security, smart_home, ev_charging
+
+STATUS ENUM VALUES (chỉ dùng đúng các giá trị này — DB enum):
+- sap_mo_ban     = sắp mở bán (chưa launch)
+- dang_mo_ban    = đang mở bán (đang bán primary)
+- dang_xay       = đang xây dựng (đã launch, chưa bàn giao)
+- da_ban_giao    = đã bàn giao (handover xong, dưới 5 năm)
+- da_ban_giao_lau = đã bàn giao lâu (handover > 5 năm)
+- unknown        = không xác định
 
 ĐƠN VỊ:
 - Giá: VND (integer, KHÔNG triệu). Ví dụ 45tr/m² = 45000000.

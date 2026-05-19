@@ -1,7 +1,15 @@
 // Gemini enrichment types
 // Output schema returned by Gemini Flash for each project in a batch.
 
-export type ProjectStatus = 'planning' | 'construction' | 'handover' | 'completed' | 'unknown'
+// Match DB enum project_status exactly. Gemini đôi khi vẫn trả English fallback;
+// route.ts có safety mapping English → VN trước khi UPDATE.
+export type ProjectStatus =
+  | 'sap_mo_ban'      // sắp mở bán
+  | 'dang_mo_ban'     // đang mở bán
+  | 'dang_xay'        // đang xây dựng
+  | 'da_ban_giao'     // đã bàn giao
+  | 'da_ban_giao_lau' // đã bàn giao lâu (>5 năm)
+  | 'unknown'
 
 export type AmenityKey =
   | 'pool'
