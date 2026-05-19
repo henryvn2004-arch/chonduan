@@ -60,9 +60,9 @@ OUTPUT SCHEMA (trả về JSON đúng theo cấu trúc này, không thêm markdo
         "building_density_pct": 35,
         "green_density_pct": 55,
         "status": "sap_mo_ban" | "dang_mo_ban" | "dang_xay" | "da_ban_giao" | "da_ban_giao_lau" | "unknown",
-        "legal_status": "Đã có sổ đỏ/hồng | Chờ cấp sổ | Pháp lý đầy đủ | ...",
-        "ownership_term": "Lâu dài | 50 năm | 70 năm",
-        "red_book_status": "đã cấp | đang chờ | n/a",
+        "legal_status": "free text mô tả pháp lý (vd: 'Đã có sổ đỏ, pháp lý đầy đủ')",
+        "ownership_term": "lau_dai" | "nam_50" | "nam_70" | "khac",
+        "red_book_status": "da_cap" | "chua_cap" | "dang_lam" | "vuong_mac",
         "amenities": ["pool","gym","kindergarten","park_garden","24h_security"],
         "price_primary_per_m2_min": 45000000,
         "price_primary_per_m2_max": 65000000,
@@ -91,6 +91,18 @@ STATUS ENUM VALUES (chỉ dùng đúng các giá trị này — DB enum):
 - da_ban_giao    = đã bàn giao (handover xong, dưới 5 năm)
 - da_ban_giao_lau = đã bàn giao lâu (handover > 5 năm)
 - unknown        = không xác định
+
+OWNERSHIP_TERM ENUM VALUES:
+- lau_dai  = sở hữu lâu dài (sổ đỏ vĩnh viễn)
+- nam_50   = 50 năm
+- nam_70   = 70 năm
+- khac     = khác (timeshare, lease, ...)
+
+RED_BOOK_STATUS ENUM VALUES (sổ đỏ):
+- da_cap     = đã cấp sổ
+- chua_cap   = chưa cấp
+- dang_lam   = đang làm/đang chờ
+- vuong_mac  = đang vướng pháp lý
 
 ĐƠN VỊ:
 - Giá: VND (integer, KHÔNG triệu). Ví dụ 45tr/m² = 45000000.

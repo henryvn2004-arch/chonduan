@@ -176,14 +176,32 @@ export async function callGeminiBatch(opts: CallOptions): Promise<{
     try {
       const { text, sources } = await callOnce(key, opts)
       const cleaned = stripFences(text)
-      let parsed: GeminiBatchOutput
+      let parsedRaw: unknown
       try {
-        parsed = JSON.parse(cleaned)
-      } catch (e) {
+        parsedRaw = JSON.parse(cleaned)
+      } catch {
         throw new GeminiAPIError(500, `Non-JSON output: ${cleaned.slice(0, 500)}`)
       }
-      if (!parsed || !Array.isArray(parsed.projects)) {
-        throw new GeminiAPIError(500, 'Output missing "projects" array')
+
+      // Resilient shape handling: Gemini đôi khi trả khác wrapper.
+      let parsed: GeminiBatchOutput
+      if (
+        parsedRaw &&
+        typeof parsedRaw === 'object' &&
+        Array.isArray((parsedRaw as { projects?: unknown }).projects)
+      ) {
+        parsed = parsedRaw as GeminiBatchOutput
+      } else if (Array.isArray(parsedRaw)) {
+        // Bare array — wrap it
+        parsed = { projects: parsedRaw as GeminiBatchOutput['projects'] }
+      } else if (parsedRaw && typeof parsedRaw === 'object' && 'id' in parsedRaw) {
+        // Single project object — wrap as 1-element array
+        parsed = { projects: [parsedRaw as GeminiBatchOutput['projects'][number]] }
+      } else {
+        throw new GeminiAPIError(
+          500,
+          `Output missing "projects" array. Got keys: ${Object.keys((parsedRaw as object) ?? {}).join(',')}`,
+        )
       }
       return { output: parsed, sources, keyUsed: maskKey(key) }
     } catch (err) {

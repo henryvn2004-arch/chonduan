@@ -60,8 +60,9 @@ interface MappedUpdate {
   sources: Record<string, { source: string; confidence: number; ts: string }>
 }
 
-// Chỉ list các DB columns thực sự tồn tại trên projects.
-// `legal_status` KHÔNG có (DB dùng `legal_issues_text` + `legal_score` + `red_book_status`).
+// Chỉ list các DB scalar columns. ENUM columns (status, red_book_status,
+// ownership_term) xử lý riêng với safety mapping. legal_status không có column
+// — map sang legal_issues_text riêng.
 const SCALAR_COPY: Array<keyof EnrichedProjectData> = [
   'description_short',
   'description_long',
@@ -72,8 +73,6 @@ const SCALAR_COPY: Array<keyof EnrichedProjectData> = [
   'total_land_ha',
   'building_density_pct',
   'green_density_pct',
-  'ownership_term',
-  'red_book_status',
   'price_primary_per_m2_min',
   'price_primary_per_m2_max',
   'price_secondary_per_m2_avg',
@@ -119,6 +118,46 @@ function mapEnrichmentToUpdate(p: EnrichedProject, sourcesFromGrounding: string[
       source: estimates.includes(field as string) ? 'gemini_estimated' : 'gemini_grounded',
       confidence: confidenceFor(field as string, estimates, baseConf),
       ts,
+    }
+  }
+
+  // Enum safety mapping cho red_book_status (DB enum: da_cap|chua_cap|dang_lam|vuong_mac)
+  if (data.red_book_status && typeof data.red_book_status === 'string') {
+    const RB = data.red_book_status.toLowerCase().trim()
+    let mapped: string | null = null
+    if (['da_cap', 'chua_cap', 'dang_lam', 'vuong_mac'].includes(RB)) mapped = RB
+    else if (/đã (cấp|có)/.test(RB) || RB.includes('da cap')) mapped = 'da_cap'
+    else if (/đang (làm|chờ|xin)/.test(RB) || RB.includes('dang')) mapped = 'dang_lam'
+    else if (/chưa|chua cap/.test(RB)) mapped = 'chua_cap'
+    else if (/vướng|vuong/.test(RB)) mapped = 'vuong_mac'
+    // 'n/a', empty, unknown → skip (don't set)
+    if (mapped) {
+      set.red_book_status = mapped
+      sources.red_book_status = {
+        source: estimates.includes('red_book_status') ? 'gemini_estimated' : 'gemini_grounded',
+        confidence: confidenceFor('red_book_status', estimates, baseConf),
+        ts,
+      }
+    }
+    // remove the raw value from set since SCALAR_COPY will try to copy it.
+    delete set['red_book_status_raw' as keyof typeof set]
+  }
+
+  // Enum safety cho ownership_term (DB: lau_dai|nam_50|nam_70|khac)
+  if (data.ownership_term && typeof data.ownership_term === 'string') {
+    const OT = data.ownership_term.toLowerCase().trim()
+    let mapped: string | null = null
+    if (['lau_dai', 'nam_50', 'nam_70', 'khac'].includes(OT)) mapped = OT
+    else if (/lâu dài|vĩnh viễn|so do/.test(OT)) mapped = 'lau_dai'
+    else if (/50 năm|50 nam|50year/.test(OT)) mapped = 'nam_50'
+    else if (/70 năm|70 nam|70year/.test(OT)) mapped = 'nam_70'
+    if (mapped) {
+      set.ownership_term = mapped
+      sources.ownership_term = {
+        source: estimates.includes('ownership_term') ? 'gemini_estimated' : 'gemini_grounded',
+        confidence: confidenceFor('ownership_term', estimates, baseConf),
+        ts,
+      }
     }
   }
 
