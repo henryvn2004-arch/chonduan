@@ -1,5 +1,5 @@
 import type { ProjectDetail } from '@/types/project'
-import { ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react'
+import { ThumbsUp, ThumbsDown, MessageSquare, ExternalLink, Star } from 'lucide-react'
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -20,10 +20,44 @@ function StarRating({ rating }: { rating: number }) {
 
 export default function ReviewSection({ project }: { project: ProjectDetail }) {
   const hasReview = project.review_count && project.review_count > 0
+  const placeQuery = encodeURIComponent(
+    `${project.name_official} ${project.district ?? ''} ${project.province}`.trim()
+  )
+  const placeEmbedUrl = `https://maps.google.com/maps?q=${placeQuery}&z=16&hl=vi&output=embed`
+  const placeReviewsUrl = `https://www.google.com/maps/search/?api=1&query=${placeQuery}`
 
   return (
     <section id="review" className="scroll-mt-28">
       <h2 className="text-xl font-bold text-[#0D1B3D] mb-4">Review cư dân</h2>
+
+      {/* Google Place reviews embed */}
+      <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden mb-3">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#E2E8F0]">
+          <div className="flex items-center gap-2 text-sm text-[#0D1B3D] min-w-0">
+            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 shrink-0" strokeWidth={2} />
+            <span className="truncate font-medium">Đánh giá trên Google</span>
+          </div>
+          <a
+            href={placeReviewsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 inline-flex items-center gap-1 text-xs font-medium text-[#1565FF] hover:underline"
+          >
+            Xem toàn bộ review <ExternalLink className="w-3 h-3" strokeWidth={2.25} />
+          </a>
+        </div>
+        <iframe
+          src={placeEmbedUrl}
+          title={`Google reviews ${project.name_official}`}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="w-full h-[320px] sm:h-[380px] border-0 block"
+          allowFullScreen
+        />
+        <p className="px-4 py-2 text-[11px] text-[#94A3B8] bg-[#F8FAFC] border-t border-[#E2E8F0]">
+          Nhấn vào pin trên bản đồ để xem đầy đủ đánh giá và hình ảnh trên Google.
+        </p>
+      </div>
 
       <div className="bg-white rounded-xl border border-[#E2E8F0] p-5">
         {hasReview ? (
@@ -58,8 +92,8 @@ export default function ReviewSection({ project }: { project: ProjectDetail }) {
         ) : (
           <div className="text-center py-8">
             <MessageSquare className="w-10 h-10 text-[#CBD5E1] mx-auto mb-3" strokeWidth={1.5} />
-            <div className="text-sm font-medium text-[#0D1B3D] mb-1">Chưa có đánh giá</div>
-            <p className="text-sm text-[#94A3B8]">Tính năng review cư dân sẽ ra mắt sớm.</p>
+            <div className="text-sm font-medium text-[#0D1B3D] mb-1">Chưa có đánh giá tổng hợp</div>
+            <p className="text-sm text-[#94A3B8]">Xem đánh giá thực tế từ cư dân và khách thăm trên Google ở trên.</p>
           </div>
         )}
       </div>

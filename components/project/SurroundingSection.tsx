@@ -1,5 +1,5 @@
 import type { ProjectDetail } from '@/types/project'
-import { TrainFront, Cross, Globe, School, Building2, ShoppingCart, Building, PlaneTakeoff } from 'lucide-react'
+import { TrainFront, Cross, Globe, School, Building2, ShoppingCart, Building, PlaneTakeoff, MapPin, ExternalLink } from 'lucide-react'
 
 function fmtDist(m: number | null): string {
   if (!m) return '—'
@@ -20,10 +20,46 @@ const ITEMS: { key: keyof ProjectDetail; label: string; Icon: React.ElementType 
 
 export default function SurroundingSection({ project }: { project: ProjectDetail }) {
   const hasData = ITEMS.some((i) => project[i.key] != null)
+  const hasCoords = project.lat != null && project.lng != null
+  const mapQuery = hasCoords
+    ? `${project.lat},${project.lng}`
+    : encodeURIComponent(`${project.name_official} ${project.district ?? ''} ${project.province}`.trim())
+  const mapsEmbedUrl = `https://maps.google.com/maps?q=${mapQuery}&z=15&hl=vi&output=embed`
+  const mapsOpenUrl = hasCoords
+    ? `https://www.google.com/maps/search/?api=1&query=${project.lat},${project.lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
 
   return (
     <section id="quy-hoach" className="scroll-mt-28">
       <h2 className="text-xl font-bold text-[#0D1B3D] mb-4">Quy hoạch & Vị trí</h2>
+
+      {/* Google Maps embed */}
+      <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden mb-3">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#E2E8F0]">
+          <div className="flex items-center gap-2 text-sm text-[#0D1B3D] min-w-0">
+            <MapPin className="w-4 h-4 text-[#1565FF] shrink-0" strokeWidth={2} />
+            <span className="truncate font-medium">
+              {project.address_full ?? `${project.district ?? ''} ${project.province}`.trim()}
+            </span>
+          </div>
+          <a
+            href={mapsOpenUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 inline-flex items-center gap-1 text-xs font-medium text-[#1565FF] hover:underline"
+          >
+            Mở Google Maps <ExternalLink className="w-3 h-3" strokeWidth={2.25} />
+          </a>
+        </div>
+        <iframe
+          src={mapsEmbedUrl}
+          title={`Bản đồ ${project.name_official}`}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="w-full h-[320px] sm:h-[400px] border-0 block"
+          allowFullScreen
+        />
+      </div>
 
       <div className="bg-white rounded-xl border border-[#E2E8F0] p-5">
         {hasData ? (

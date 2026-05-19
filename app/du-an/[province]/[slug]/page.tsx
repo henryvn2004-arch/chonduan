@@ -201,10 +201,10 @@ export default async function ProjectHubPage({ params, searchParams }: Props) {
           <ReviewSection project={project} />
           <RiskSection project={project} />
           <OutlookSection project={project} />
-          <NewsSection projectId={project.id} projectName={project.name_official} />
+          <NewsSection projectId={project.id} projectName={project.name_official} province={project.province} />
           <FAQSection project={project} />
           <AgentsSection projectId={project.id} projectName={project.name_official} province={project.province} />
-          <SimilarSection province={project.province} currentId={project.id} />
+          <SimilarSection province={project.province} currentId={project.id} lat={project.lat} lng={project.lng} />
         </div>
       </main>
     </div>
