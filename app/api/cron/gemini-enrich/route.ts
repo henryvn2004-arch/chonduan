@@ -211,6 +211,16 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // Kill-switch: phải set ENRICH_ENABLED=true trên Vercel để bật cron.
+  // Default = paused. Cho phép pause/resume mà không cần code change.
+  if (process.env.ENRICH_ENABLED !== 'true') {
+    return NextResponse.json({
+      ok: false,
+      paused: true,
+      reason: 'ENRICH_ENABLED env flag is not "true" — cron paused.',
+    })
+  }
+
   const supabase = serviceClient()
   const startedAt = Date.now()
   // Reserve 30s buffer so we don't get killed mid-write.
