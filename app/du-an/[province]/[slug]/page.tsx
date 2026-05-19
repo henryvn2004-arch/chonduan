@@ -58,6 +58,7 @@ async function fetchProject(province: string, slug: string): Promise<ProjectDeta
       flood_risk_level, tide_risk_level, air_pollution_score, noise_level,
       investment_score, outlook_text,
       logo_url, banner_url, gallery_urls, video_tour_url,
+      gmaps_photo_url, gmaps_photo_attribution,
       main_direction, compatible_can_chi, incompatible_can_chi, fengshui_notes,
       review_count, review_avg_rating, review_pros_summary, review_cons_summary,
       ai_faq, ai_overview, ai_pros_cons, ai_audio_url,

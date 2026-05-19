@@ -150,6 +150,8 @@ export interface ProjectDetail {
   banner_url: string | null
   gallery_urls: string[] | null
   video_tour_url: string | null
+  gmaps_photo_url: string | null
+  gmaps_photo_attribution: string | null
 
   // Fengshui
   main_direction: string | null

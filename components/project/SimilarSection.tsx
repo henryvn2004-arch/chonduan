@@ -10,6 +10,7 @@ interface NearbyProject {
   province: string
   district: string | null
   banner_url: string | null
+  gmaps_photo_url: string | null
   price_primary_per_m2_min: number | null
   tier: string | null
   lat: number | null
@@ -41,7 +42,7 @@ async function fetchNearby(
   const delta = 0.1
   const { data } = await supabase
     .from('projects')
-    .select('id, slug, name_official, province, district, banner_url, price_primary_per_m2_min, tier, lat, lng')
+    .select('id, slug, name_official, province, district, banner_url, gmaps_photo_url, price_primary_per_m2_min, tier, lat, lng')
     .neq('id', currentId)
     .not('lat', 'is', null)
     .not('lng', 'is', null)
@@ -63,7 +64,7 @@ async function fetchNearby(
   if (projects.length === 0) {
     const { data: fallback } = await supabase
       .from('projects')
-      .select('id, slug, name_official, province, district, banner_url, price_primary_per_m2_min, tier, lat, lng')
+      .select('id, slug, name_official, province, district, banner_url, gmaps_photo_url, price_primary_per_m2_min, tier, lat, lng')
       .eq('province', province)
       .neq('id', currentId)
       .limit(6)
@@ -77,7 +78,7 @@ async function fetchByProvince(province: string, currentId: string): Promise<Nea
   const supabase = await createClient()
   const { data } = await supabase
     .from('projects')
-    .select('id, slug, name_official, province, district, banner_url, price_primary_per_m2_min, tier, lat, lng')
+    .select('id, slug, name_official, province, district, banner_url, gmaps_photo_url, price_primary_per_m2_min, tier, lat, lng')
     .eq('province', province)
     .neq('id', currentId)
     .limit(6)
@@ -127,11 +128,20 @@ export default async function SimilarSection({
             className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover:shadow-md hover:border-[#1565FF]/30 transition-all group"
           >
             <div className="relative h-32 bg-[#F1F5F9]">
-              {p.banner_url ? (
-                <Image src={p.banner_url} alt={p.name_official} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1565FF]/20 to-[#0D1B3D]/10" />
-              )}
+              {(() => {
+                const img = p.banner_url ?? p.gmaps_photo_url
+                return img ? (
+                  <Image
+                    src={img}
+                    alt={p.name_official}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized={img === p.gmaps_photo_url}
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#1565FF]/20 to-[#0D1B3D]/10" />
+                )
+              })()}
               {hasCoords && p.distance_km > 0 && (
                 <div className="absolute top-2 left-2 inline-flex items-center gap-1 bg-white/95 backdrop-blur px-2 py-0.5 rounded-full text-[10px] font-semibold text-[#0D1B3D] shadow-sm">
                   <MapPin className="w-2.5 h-2.5 text-[#1565FF]" strokeWidth={2.5} />

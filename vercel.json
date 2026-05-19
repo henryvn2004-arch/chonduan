@@ -11,10 +11,17 @@
     {
       "path": "/api/cron/gemini-enrich",
       "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/gmaps-photos",
+      "schedule": "0 * * * *"
     }
   ],
   "functions": {
     "app/api/cron/gemini-enrich/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/cron/gmaps-photos/route.ts": {
       "maxDuration": 300
     }
   }

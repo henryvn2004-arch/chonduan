@@ -23,20 +23,22 @@ const STATUS_COLOR: Record<string, string> = {
 }
 
 export default function ProjectHero({ project }: { project: ProjectDetail }) {
-  const hasBanner = !!project.banner_url
+  const heroImage = project.banner_url ?? project.gmaps_photo_url ?? null
+  const isGoogleImage = !project.banner_url && !!project.gmaps_photo_url
   const gallery = project.gallery_urls ?? []
 
   return (
     <div className="relative bg-[#0D1B3D]">
       {/* Banner */}
       <div className="relative h-64 sm:h-80 overflow-hidden">
-        {hasBanner ? (
+        {heroImage ? (
           <Image
-            src={project.banner_url!}
+            src={heroImage}
             alt={project.name_official}
             fill
             className="object-cover opacity-70"
             priority
+            unoptimized={heroImage === project.gmaps_photo_url}
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-[#1565FF]/30 to-[#0D1B3D]" />
@@ -44,6 +46,16 @@ export default function ProjectHero({ project }: { project: ProjectDetail }) {
 
         {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B3D] via-transparent to-transparent" />
+
+        {/* Google attribution (ToS) */}
+        {isGoogleImage && (
+          <div
+            className="absolute bottom-2 left-3 text-[10px] text-white/60 [&_a]:text-white/80 [&_a]:underline"
+            dangerouslySetInnerHTML={{
+              __html: `Ảnh: ${project.gmaps_photo_attribution ?? 'Google Maps'}`,
+            }}
+          />
+        )}
 
         {/* Thumbnail strip */}
         {gallery.length > 0 && (
