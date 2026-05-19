@@ -8,8 +8,6 @@ const TABS = [
   { id: 'phap-ly', label: 'Pháp lý' },
   { id: 'tien-ich', label: 'Tiện ích' },
   { id: 'quy-hoach', label: 'Quy hoạch' },
-  { id: 'phong-thuy', label: 'Phong thủy' },
-  { id: 'review', label: 'Review' },
   { id: 'rui-ro', label: 'Rủi ro' },
   { id: 'trien-vong', label: 'Triển vọng' },
   { id: 'tin-tuc', label: 'Tin tức' },

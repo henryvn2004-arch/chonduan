@@ -9,8 +9,6 @@ import PriceSection from '@/components/project/PriceSection'
 import LegalSection from '@/components/project/LegalSection'
 import AmenitiesSection from '@/components/project/AmenitiesSection'
 import SurroundingSection from '@/components/project/SurroundingSection'
-import FengshuiSection from '@/components/project/FengshuiSection'
-import ReviewSection from '@/components/project/ReviewSection'
 import RiskSection from '@/components/project/RiskSection'
 import OutlookSection from '@/components/project/OutlookSection'
 import NewsSection from '@/components/project/NewsSection'
@@ -198,8 +196,6 @@ export default async function ProjectHubPage({ params, searchParams }: Props) {
           <LegalSection project={project} />
           <AmenitiesSection project={project} />
           <SurroundingSection project={project} />
-          <FengshuiSection project={project} />
-          <ReviewSection project={project} />
           <RiskSection project={project} />
           <OutlookSection project={project} />
           <NewsSection projectId={project.id} projectName={project.name_official} province={project.province} />

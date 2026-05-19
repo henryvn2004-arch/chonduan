@@ -84,20 +84,28 @@ function parseRssItems(xml: string): NewsItem[] {
   return items
 }
 
-async function fetchGoogleNews(projectName: string, province: string): Promise<NewsItem[]> {
-  const q = encodeURIComponent(`"${projectName}" ${province}`)
-  const url = `https://news.google.com/rss/search?q=${q}&hl=vi&gl=VN&ceid=VN:vi`
+async function fetchRss(query: string): Promise<NewsItem[]> {
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=vi&gl=VN&ceid=VN:vi`
   try {
     const res = await fetch(url, {
       next: { revalidate: 3600 },
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ChonDuAn/1.0)' },
     })
     if (!res.ok) return []
-    const xml = await res.text()
-    return parseRssItems(xml).slice(0, 6)
+    return parseRssItems(await res.text())
   } catch {
     return []
   }
+}
+
+async function fetchGoogleNews(projectName: string, province: string): Promise<NewsItem[]> {
+  // Try 1: unquoted name + province (broader recall than exact-phrase quotes)
+  let items = await fetchRss(`${projectName} ${province}`.trim())
+  // Try 2: name only — many lesser-known projects have news that don't mention province
+  if (items.length === 0) {
+    items = await fetchRss(projectName)
+  }
+  return items.slice(0, 6)
 }
 
 function fmtRelativeDate(input: string) {
@@ -131,7 +139,7 @@ export default async function NewsSection({
     fetchKhaoLuan(projectId),
   ])
 
-  const googleNewsUrl = `https://news.google.com/search?q=${encodeURIComponent(`"${projectName}" ${province ?? ''}`)}&hl=vi&gl=VN&ceid=VN:vi`
+  const googleNewsUrl = `https://news.google.com/search?q=${encodeURIComponent(`${projectName} ${province ?? ''}`.trim())}&hl=vi&gl=VN&ceid=VN:vi`
 
   return (
     <section id="tin-tuc" className="scroll-mt-28">

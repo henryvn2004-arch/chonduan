@@ -1,5 +1,5 @@
 import type { ProjectDetail } from '@/types/project'
-import { ThumbsUp, ThumbsDown, MessageSquare, ExternalLink, Star } from 'lucide-react'
+import { ThumbsUp, ThumbsDown, ExternalLink, Star } from 'lucide-react'
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -59,8 +59,8 @@ export default function ReviewSection({ project }: { project: ProjectDetail }) {
         </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#E2E8F0] p-5">
-        {hasReview ? (
+      {hasReview && (
+        <div className="bg-white rounded-xl border border-[#E2E8F0] p-5">
           <div className="space-y-4">
             {/* Rating overview */}
             <div className="flex items-center gap-4">
@@ -89,14 +89,8 @@ export default function ReviewSection({ project }: { project: ProjectDetail }) {
               )}
             </div>
           </div>
-        ) : (
-          <div className="text-center py-8">
-            <MessageSquare className="w-10 h-10 text-[#CBD5E1] mx-auto mb-3" strokeWidth={1.5} />
-            <div className="text-sm font-medium text-[#0D1B3D] mb-1">Chưa có đánh giá tổng hợp</div>
-            <p className="text-sm text-[#94A3B8]">Xem đánh giá thực tế từ cư dân và khách thăm trên Google ở trên.</p>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   )
 }
